@@ -1,6 +1,5 @@
 package com.geoshare.backend.entity;
 
-import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,31 +19,22 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Table(name="location")
-public class Location {
+@Table(name="comment_location")
+public class LocationComment {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.AUTO) 
 	private Long id;
 	
-	@Column(name="url", length=255)
-	private String url;
-	
-    @Column(name="lat", precision = 9, scale = 7)
-    private BigDecimal lat;
-	
-    @Column(name="lng", precision = 10, scale = 8)
-    private BigDecimal lng;
-	
-	@Column(name="description")
-	private String description;
+	@Column(name="content")
+	private String content;
 	
 	@ManyToOne
-	@JoinColumn(name="country_id")
-	private Country country;
-    
+	@JoinColumn(name="location_id")
+	private Location location;
+	
 	@ManyToOne
-	@JoinColumn(name="user_Id")
+	@JoinColumn(name="user_id")
 	private User user;
-    
+	
 }
