@@ -31,7 +31,7 @@ public class ListComment {
 	
 	@ManyToOne
 	@JoinColumn(name="list_id")
-	private List list;
+	private LocationList locationList;
 	
 	@ManyToOne
 	@JoinColumn(name="user_id")
