@@ -19,7 +19,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name="list")
-public class List {
+public class LocationList {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO) 
