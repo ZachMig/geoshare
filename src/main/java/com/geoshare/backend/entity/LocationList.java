@@ -34,6 +34,9 @@ public class LocationList {
 	@Column(name="public")
 	private boolean isPublic;
 	
+	@Column(name="like_count")
+	private Long likeCount;
+	
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
