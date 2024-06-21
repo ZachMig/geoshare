@@ -13,23 +13,23 @@ public class LocationService {
 	@Autowired
 	private LocationRepository locationRepository;
 	
-	List<Location> findAllByUser(Long userID) {
+	public List<Location> findAllByUser(Long userID) {
 		return locationRepository.findAllByUser(userID);
 	}
 	
-	List<Location> findAllByUser(String username) {
+	public List<Location> findAllByUser(String username) {
 		return locationRepository.findAllByUser(username);
 	}
 	
-	List<Location> findAllByCountry(Long countryID) {
+	public List<Location> findAllByCountry(Long countryID) {
 		return locationRepository.findAllByCountry(countryID);
 	}
 	
-	List<Location> findAllByCountry(String countryName) {
+	public List<Location> findAllByCountry(String countryName) {
 		return locationRepository.findAllByCountry(countryName);
 	}
 		
-	Location findByID(Long id) {
+	public Location findByID(Long id) {
 		return locationRepository.findByLocationID(id);
 	}
 	

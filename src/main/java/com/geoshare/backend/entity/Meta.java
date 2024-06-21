@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name="meta")
@@ -25,4 +23,14 @@ public class Meta {
 	
 	@Column(name="name")
 	private String name;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+	
 }

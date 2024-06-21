@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name="country")
@@ -25,5 +23,13 @@ public class Country {
 	
 	@Column(name="name")
 	private String name;
+	
+	public Long getID() {
+		return this.id;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
 	
 }

@@ -14,19 +14,19 @@ public class ListCommentService {
 	@Autowired
 	private ListCommentRepository listCommentRepository;
 	
-	List<ListComment> findAllByList(Long listID) {
+	public List<ListComment> findAllByList(Long listID) {
 		return listCommentRepository.findAllByList(listID);
 	}
 	
-	List<ListComment> findAllByUser(Long userID) {
+	public List<ListComment> findAllByUser(Long userID) {
 		return listCommentRepository.findAllByUser(userID);
 	}
 	
-	List<ListComment> findAllByUser(String username) {
+	public List<ListComment> findAllByUser(String username) {
 		return listCommentRepository.findAllByUser(username);
 	}
 	
-	ListComment findByID(Long id) {
+	public ListComment findByID(Long id) {
 		return listCommentRepository.findByID(id);
 	}
 	

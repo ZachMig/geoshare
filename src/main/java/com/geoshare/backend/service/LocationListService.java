@@ -14,19 +14,19 @@ public class LocationListService {
 	@Autowired
 	private LocationListRepository locationListRepository;
 	
-	List<LocationList> findAllByUser(Long userID) {
+	public List<LocationList> findAllByUser(Long userID) {
 		return locationListRepository.findAllByUser(userID);
 	}
 	
-	List<LocationList> findAllByUser(String username) {
+	public List<LocationList> findAllByUser(String username) {
 		return locationListRepository.findAllByUser(username);
 	}
 	
-	List<LocationList> findTopLiked(Long minLikes) {
+	public List<LocationList> findTopLiked(Long minLikes) {
 		return locationListRepository.findTopLiked(minLikes);
 	}
 	
-	LocationList findByName(String name) {
+	public LocationList findByName(String name) {
 		return locationListRepository.findByName(name);
 	}
 	

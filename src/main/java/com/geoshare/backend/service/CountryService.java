@@ -13,6 +13,10 @@ public class CountryService {
 	@Autowired
 	private CountryRepository countryRepository;
 	
+	public Country findByID(Long id) {
+		return countryRepository.findByID(id);
+	}
+	
 	public List<Country> findAll() {
 		return countryRepository.findAll();
 	}

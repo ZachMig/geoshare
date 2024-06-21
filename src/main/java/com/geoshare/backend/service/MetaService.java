@@ -14,6 +14,10 @@ public class MetaService {
 	@Autowired
 	private MetaRepository metaRepository;
 	
+	public Meta findByID(Long id) {
+		return metaRepository.findByID(id);
+	}
+	
 	public List<Meta> findAll() {
 		return metaRepository.findAll();
 	}
