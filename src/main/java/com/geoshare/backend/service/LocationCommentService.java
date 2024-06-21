@@ -14,19 +14,19 @@ public class LocationCommentService {
 	@Autowired
 	private LocationCommentRepository locationCommentRepository;
 	
-	List<LocationComment> findAllByLocation(Long locationID) {
+	public List<LocationComment> findAllByLocation(Long locationID) {
 		return locationCommentRepository.findAllByLocation(locationID);
 	}
 	
-	List<LocationComment> findAllByUser(Long userID) {
+	public List<LocationComment> findAllByUser(Long userID) {
 		return locationCommentRepository.findAllByUser(userID);
 	}
 	
-	List<LocationComment> findAllByUser(String username) {
+	public List<LocationComment> findAllByUser(String username) {
 		return locationCommentRepository.findAllByUser(username);
 	}
 	
-	LocationComment findById(Long id) {
+	public LocationComment findById(Long id) {
 		return locationCommentRepository.findByID(id);
 	}
 	

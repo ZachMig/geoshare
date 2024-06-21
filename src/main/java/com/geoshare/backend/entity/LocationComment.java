@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @Table(name="comment_location")
@@ -36,5 +34,21 @@ public class LocationComment {
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public User getUser() {
+		return user;
+	}
 	
 }

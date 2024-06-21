@@ -36,6 +36,22 @@ public class ListComment {
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public LocationList getLocationList() {
+		return locationList;
+	}
+
+	public User getUser() {
+		return user;
+	}
 	
 }
 

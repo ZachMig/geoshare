@@ -46,5 +46,33 @@ public class Location {
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
-    
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public BigDecimal getLat() {
+		return lat;
+	}
+
+	public BigDecimal getLng() {
+		return lng;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public User getUser() {
+		return user;
+	}
+	
 }
