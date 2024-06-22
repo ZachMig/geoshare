@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.geoshare.backend.entity.Country;
@@ -18,12 +18,13 @@ public class CountryController {
 	@Autowired
 	private CountryService countryService;
 	
-	@GetMapping("/find/{id}")
-	public Country getCountry(@PathVariable Long id) {
-		return countryService.findByID(id);
+	@GetMapping("/find")
+	public Country getCountry(
+			@RequestParam(value = "countryID", required = true)Long countryID) {
+		return countryService.findByID(countryID);
 	}
 	
-	@GetMapping("/find/all")
+	@GetMapping("/findall")
 	public List<Country> getAllCountries() {
 		return countryService.findAll();
 	}
