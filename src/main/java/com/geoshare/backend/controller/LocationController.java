@@ -18,13 +18,12 @@ public class LocationController {
 	@Autowired
 	private LocationService locationService;
 	
-	@GetMapping("/find")
-	public List<Location> getLocation(
+	@GetMapping("/findall")
+	public List<Location> getLocations(
 	    @RequestParam(value = "uid", required = false) Long userID,
 	    @RequestParam(value = "uname", required = false) String username,
 	    @RequestParam(value = "cid", required = false) Long countryID,
-	    @RequestParam(value = "cname", required = false) String countryName,
-	    @RequestParam(value = "lid", required = false) Long locationID) 
+	    @RequestParam(value = "cname", required = false) String countryName)
 	{
 		
 		if (userID != null) {
@@ -43,41 +42,14 @@ public class LocationController {
 			return locationService.findAllByCountry(countryName);
 		}
 		
-		if (locationID != null) {
-			return List.of(locationService.findByID(locationID));
-		}
-		
 		throw new IllegalArgumentException("This request requires one search parameter.");
 		
 	}
-
-	
-	
-	/**
-	@GetMapping("/find")
-	public List<Location> getLocationByUserID(@RequestParam(value="uid") Long userID) {
-		return locationService.findAllByUser(userID);
-	}
 	
 	@GetMapping("/find")
-	public List<Location> getLocationByUsername(@RequestParam(value="uname") String username) {
-		return locationService.findAllByUser(username);
-	}
-	
-	@GetMapping("/find")
-	public List<Location> getLocationByCountryID(@RequestParam(value="cid") Long countryID) {
-		return locationService.findAllByCountry(countryID);
-	}
-	
-	@GetMapping("/find")
-	public List<Location> getLocationByCountryName(@RequestParam(value="cname") String countryName) {
-		return locationService.findAllByCountry(countryName);
-	}
-	
-	@GetMapping("/find")
-	public Location getLocationByID(@RequestParam(value="lid") Long locationID) {
+	public Location getLocation(
+			@RequestParam(value = "lid", required = true) Long locationID) {
 		return locationService.findByID(locationID);
 	}
-	*/
-	
+
 }

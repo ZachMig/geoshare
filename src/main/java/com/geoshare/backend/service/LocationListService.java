@@ -1,10 +1,8 @@
 package com.geoshare.backend.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.repository.LocationListRepository;
 
@@ -22,12 +20,16 @@ public class LocationListService {
 		return locationListRepository.findAllByUser(username);
 	}
 	
-	public List<LocationList> findTopLiked(Long minLikes) {
-		return locationListRepository.findTopLiked(minLikes);
-	}
+//	public List<LocationList> findTopLiked(Long minLikes) {
+//		return locationListRepository.findTopLiked(minLikes);
+//	}
 	
-	public LocationList findByName(String name) {
-		return locationListRepository.findByName(name);
+//	public LocationList findByName(String name) {
+//		return locationListRepository.findByName(name);
+//	}
+
+	public LocationList findByID(Long listID) {
+		return locationListRepository.findByID(listID);
 	}
 	
 }
