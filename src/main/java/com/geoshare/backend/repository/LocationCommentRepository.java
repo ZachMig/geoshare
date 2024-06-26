@@ -16,7 +16,7 @@ public interface LocationCommentRepository extends CrudRepository<LocationCommen
 	@Query("SELECT C FROM LocationComment C WHERE C.user.id = :userID")
 	List<LocationComment> findAllByUser(Long userID);
 	
-	@Query("SELECT C FROM LocationComment C JOIN User U ON C.user.id = U.id "
+	@Query("SELECT C FROM LocationComment C JOIN GeoshareUser U ON C.user.id = U.id "
 			+ "WHERE U.username = :username")
 	List<LocationComment> findAllByUser(String username);
 	

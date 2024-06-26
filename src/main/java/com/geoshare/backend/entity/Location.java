@@ -45,7 +45,7 @@ public class Location {
     
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User user;
+	private GeoshareUser user;
 
 	public Long getId() {
 		return id;
@@ -71,7 +71,7 @@ public class Location {
 		return country;
 	}
 
-	public User getUser() {
+	public GeoshareUser getUser() {
 		return user;
 	}
 	
