@@ -13,7 +13,7 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
 	@Query("SELECT L FROM Location L WHERE L.user.id = :userID")
 	List<Location> findAllByUser(Long userID);
 	
-	@Query("SELECT L FROM Location L JOIN User U ON L.user.id = U.id "
+	@Query("SELECT L FROM Location L JOIN GeoshareUser U ON L.user.id = U.id "
 			+ "WHERE U.username = :username")
 	List<Location> findAllByUser(String username);
 	

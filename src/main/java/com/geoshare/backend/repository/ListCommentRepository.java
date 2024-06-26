@@ -16,7 +16,7 @@ public interface ListCommentRepository extends CrudRepository<ListComment, Long>
 	@Query("SELECT C FROM ListComment C WHERE C.user.id = :userID")
 	List<ListComment> findAllByUser(Long userID);
 	
-	@Query("SELECT C FROM ListComment C JOIN User U ON C.user.id = U.id "
+	@Query("SELECT C FROM ListComment C JOIN GeoshareUser U ON C.user.id = U.id "
 			+ "WHERE U.username = :username")
 	List<ListComment> findAllByUser(String username);
 	

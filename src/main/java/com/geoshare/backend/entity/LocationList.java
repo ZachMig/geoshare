@@ -37,7 +37,7 @@ public class LocationList {
 	
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User user;
+	private GeoshareUser user;
 
 	public Long getId() {
 		return id;
@@ -59,7 +59,7 @@ public class LocationList {
 		return likeCount;
 	}
 
-	public User getUser() {
+	public GeoshareUser getUser() {
 		return user;
 	}
 	

@@ -13,7 +13,7 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 	@Query("SELECT L FROM LocationList L WHERE L.user.id = :userID")
 	List<LocationList> findAllByUser(Long userID);
 	
-	@Query("SELECT L FROM LocationList L JOIN User U ON L.user.id = U.id "
+	@Query("SELECT L FROM LocationList L JOIN GeoshareUser U ON L.user.id = U.id "
 			+ "WHERE U.username = :username")
 	List<LocationList> findAllByUser(String username);
 	
