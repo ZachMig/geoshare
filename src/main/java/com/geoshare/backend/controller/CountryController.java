@@ -15,8 +15,11 @@ import com.geoshare.backend.service.CountryService;
 @RequestMapping("/api/countries")
 public class CountryController {
 
-	@Autowired
 	private CountryService countryService;
+
+	public CountryController(CountryService countryService) {
+		this.countryService = countryService;
+	}
 	
 	@GetMapping("/find")
 	public Country getCountry(

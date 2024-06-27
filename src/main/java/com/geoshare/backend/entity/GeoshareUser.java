@@ -13,11 +13,12 @@ public class GeoshareUser {
 	
 	public GeoshareUser() {}
 	
-	public GeoshareUser(String username, String password, String roles) {
+	public GeoshareUser(String username, String password) {
 		this.username = username;
 		this.password = password;
-		this.roles = roles;
+		this.roles = "ROLE_USER";
 	}
+	
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
