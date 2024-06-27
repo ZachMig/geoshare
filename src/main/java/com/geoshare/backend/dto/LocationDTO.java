@@ -15,9 +15,13 @@ public class LocationDTO {
 	@NotBlank
 	private String description;
 	
-	@Size(max = 32)
-	@NotBlank
-	private String country;
+//	@Size(max = 32)
+//	@NotBlank
+//	private String country;
+	
+	@Max(value = Long.MAX_VALUE)
+	@NotNull
+	private Long countryID;
 	
 	@Max(value = Long.MAX_VALUE)
 	@NotNull
@@ -40,12 +44,12 @@ public class LocationDTO {
 		this.description = description;
 	}
 
-	public String getCountry() {
-		return country;
+	public Long getCountryID() {
+		return countryID;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
+	public void setCountryID(Long countryID) {
+		this.countryID = countryID;
 	}
 
 	public Long getUserID() {

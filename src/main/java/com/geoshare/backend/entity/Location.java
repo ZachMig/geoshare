@@ -20,6 +20,16 @@ import lombok.Setter;
 @Table(name="location")
 public class Location {
 	
+	public Location(String url, BigDecimal lat, BigDecimal lng, String description, Country country,
+			GeoshareUser user) {
+		this.url = url;
+		this.lat = lat;
+		this.lng = lng;
+		this.description = description;
+		this.country = country;
+		this.user = user;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
