@@ -41,6 +41,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests((authorizeHttpRequests) ->
                             authorizeHttpRequests
                             		.requestMatchers("/api/users/create").permitAll()
+                            		.requestMatchers("api/locations/create").permitAll()
                                     //.requestMatchers("/**").hasRole("USER")
                             		.anyRequest().authenticated()
                     )
