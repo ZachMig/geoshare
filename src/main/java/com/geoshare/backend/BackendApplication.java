@@ -16,11 +16,11 @@ public class BackendApplication {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 	
-	@Bean
-	CommandLineRunner commandLinerUnner(GeoshareUserRepository users, PasswordEncoder encoder) {
-		return args -> {
-			users.save(new GeoshareUser("user", encoder.encode("password"), "ROLE_USER"));
-		};
-	}
+//	@Bean
+//	CommandLineRunner commandLinerUnner(GeoshareUserRepository users, PasswordEncoder encoder) {
+//		return args -> {
+//			users.save(new GeoshareUser("user", encoder.encode("password"), "ROLE_USER"));
+//		};
+//	}
 	
 }
