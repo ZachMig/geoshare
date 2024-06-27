@@ -16,7 +16,9 @@ import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.service.LocationService;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/locations")
 public class LocationController {
@@ -58,6 +60,12 @@ public class LocationController {
 		return locationService.findByID(locationID);
 	}
 	
+	
+	/**
+	 * Make sure the app passes a trimmed location to this API
+	 *  without https://www etc. Should just start with 
+	 *  google.com/maps/@
+	 */
 	@PostMapping("/create")
 	public HttpStatus createLocation(
 			@Valid
@@ -68,6 +76,7 @@ public class LocationController {
 			locationService.createLocation(locationDTO);
 			return HttpStatus.OK;
 		} catch (Exception e) {
+			log.info(e.getMessage());
 			return HttpStatus.BAD_REQUEST;
 		}
 		
