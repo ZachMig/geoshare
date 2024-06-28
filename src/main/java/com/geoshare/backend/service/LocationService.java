@@ -55,10 +55,10 @@ public class LocationService {
 	
 	public void createLocation(LocationDTO locationDTO) {
 		BigDecimal lat, lng;
-		String url = locationDTO.getUrl();
-		String description = locationDTO.getDescription();
-		Long countryID = locationDTO.getCountryID();
-		Long userID = locationDTO.getUserID();
+		String url = locationDTO.url();
+		String description = locationDTO.description();
+		Long countryID = locationDTO.countryID();
+		Long userID = locationDTO.userID();
 		
 		BigDecimal[] coords = parseLatAndLong(url);
 		lat = coords[0];

@@ -21,8 +21,8 @@ public class GeoshareUserService {
 	
 	public void createUser(GeoshareUserDTO userDTO) {
 		GeoshareUser userEntity = new GeoshareUser(
-				userDTO.getUsername(),
-				passwordEncoder.encode(userDTO.getPassword())
+				userDTO.username(),
+				passwordEncoder.encode(userDTO.password())
 //				userDTO.getEmail()
 		);
 		
