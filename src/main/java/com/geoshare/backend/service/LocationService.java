@@ -106,4 +106,23 @@ public class LocationService {
 	}
 	
 	
+	
+	public boolean userOwnsLocation(String usernameGiven, Long locationID) {
+		
+		Location locToDelete = locationRepository.findByLocationID(locationID);
+		String usernameInDB = locToDelete.getUser().getUsername();
+		
+		if (usernameInDB.equals(usernameGiven)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public void deleteLocation(Long locationID) {
+		locationRepository.deleteById(locationID);
+	}
+	
+	
 }
