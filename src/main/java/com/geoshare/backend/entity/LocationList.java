@@ -19,6 +19,14 @@ import lombok.Setter;
 @Table(name="list")
 public class LocationList {
 	
+	public LocationList(String name, String description, boolean isPublic, Long likeCount, GeoshareUser user) {
+		this.name = name;
+		this.description = description;
+		this.isPublic = isPublic;
+		this.likeCount = likeCount;
+		this.user = user;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private Long id;

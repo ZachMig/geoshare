@@ -53,14 +53,11 @@ public class SecurityConfig {
                     .authorizeHttpRequests((authorizeHttpRequests) ->
                             authorizeHttpRequests
                             		.requestMatchers("/api/users/create").permitAll()
-                            		//.requestMatchers("api/locations/create").permitAll()
-                                    //.requestMatchers("/**").hasRole("USER")
                             		.requestMatchers("/api/auth/gettoken").permitAll()
                             		.anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-//                    .httpBasic(withDefaults());
             return http.build();
     }
     
