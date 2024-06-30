@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +82,31 @@ public class LocationController {
 			log.info(e.getMessage());
 			return HttpStatus.BAD_REQUEST;
 		}
+		
+	}
+	
+	@DeleteMapping("/delete")
+	public ResponseEntity<String> deleteLocation(
+			@RequestParam(value = "lid", required = true) Long locationID,
+			Authentication auth) {
+		
+		String username = auth.getName();
+		
+		if (locationService.userOwnsLocation(username, locationID)) {
+			
+			try {
+				locationService.deleteLocation(locationID);
+			} catch (Exception e) {
+				return new ResponseEntity<>("Erorr attempting to delete location: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+			}
+			
+		} else { //This user does not own this location they are trying to delete
+			return new ResponseEntity<>("Logged in user does not own this location.", HttpStatus.FORBIDDEN);
+		}
+		
+		
+		
+		return null;
 		
 	}
 	
