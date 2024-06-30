@@ -96,6 +96,7 @@ public class LocationController {
 			
 			try {
 				locationService.deleteLocation(locationID);
+				return new ResponseEntity<>("Delete request ran with no errors.", HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<>("Erorr attempting to delete location: " + e.getMessage(), HttpStatus.BAD_REQUEST);
 			}
@@ -103,10 +104,6 @@ public class LocationController {
 		} else { //This user does not own this location they are trying to delete
 			return new ResponseEntity<>("Logged in user does not own this location.", HttpStatus.FORBIDDEN);
 		}
-		
-		
-		
-		return null;
 		
 	}
 	
