@@ -15,7 +15,7 @@ public class MetaService {
 	private MetaRepository metaRepository;
 	
 	public Meta findByID(Long id) {
-		return metaRepository.findByID(id);
+		return metaRepository.findByIDOrThrow(id);
 	}
 	
 	public List<Meta> findAll() {
