@@ -90,9 +90,7 @@ public class LocationController {
 			@RequestParam(value = "lid", required = true) Long locationID,
 			Authentication auth) {
 		
-		String username = auth.getName();
-		
-		if (locationService.userOwnsLocation(username, locationID)) {
+		if (locationService.userOwnsLocation(auth, locationID)) {
 			
 			try {
 				locationService.deleteLocation(locationID);

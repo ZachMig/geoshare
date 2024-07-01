@@ -1,21 +1,27 @@
 package com.geoshare.backend.entity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name="location")
 public class Location {
 	
@@ -27,6 +33,7 @@ public class Location {
 		this.description = description;
 		this.country = country;
 		this.user = user;
+		this.lists = new HashSet<>();
 	}
 
 	@Id
@@ -52,33 +59,10 @@ public class Location {
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private GeoshareUser user;
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public BigDecimal getLat() {
-		return lat;
-	}
-
-	public BigDecimal getLng() {
-		return lng;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public GeoshareUser getUser() {
-		return user;
-	}
+	
+	@ManyToMany(mappedBy="locations", fetch = FetchType.LAZY)
+	private Set<LocationList> lists;
+	
+	
 	
 }

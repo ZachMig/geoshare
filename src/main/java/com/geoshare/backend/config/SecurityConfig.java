@@ -7,9 +7,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -57,7 +55,7 @@ public class SecurityConfig {
                             		.anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+                    .oauth2ResourceServer((oauth) -> oauth.jwt((jwt) -> jwt.decoder(jwtDecoder())));
             return http.build();
     }
     
@@ -74,8 +72,12 @@ public class SecurityConfig {
     }
     
     @Bean
-    JwtDecoder jwtDecoder() throws JOSEException {
-    	return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    JwtDecoder jwtDecoder() {
+    	try {
+    		return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    	} catch (JOSEException e) {
+    		throw new RuntimeException("JwtDecoder bean creation error", e);
+    	}
     }
     
 }
