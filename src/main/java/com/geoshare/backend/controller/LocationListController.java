@@ -1,5 +1,6 @@
 package com.geoshare.backend.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +60,8 @@ public class LocationListController {
 			LocationListDTO listDTO,
 			Authentication auth) {
 		
-		try {
-			locationListService.createList(listDTO, auth);
-			return new ResponseEntity<>("List create request handled successfully.", HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>("Error creating list. " + e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+		locationListService.createList(listDTO, auth);
+		return new ResponseEntity<>("List create request handled successfully.", HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete")
@@ -72,13 +69,8 @@ public class LocationListController {
 			@RequestParam(value = "listid", required = true) Long listID,
 			Authentication auth) {
 		
-		try {
 			locationListService.deleteList(listID, auth);
 			return new ResponseEntity<>("List delete request handled successfully.", HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>("Error deleting list. " + e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-		
 	}
 	
 	@PutMapping("/update")
@@ -87,13 +79,19 @@ public class LocationListController {
 			@Valid @RequestBody LocationListDTO listDTO,
 			Authentication auth) {
 		
-		try {
-			locationListService.updateList(listID, listDTO, auth);
-			return new ResponseEntity<>("List update request handled successfully.", HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>("Error updating list. " + e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-		
+		locationListService.updateList(listID, listDTO, auth);
+		return new ResponseEntity<>("List update request handled successfully.", HttpStatus.OK);
+	}
+	
+	@PutMapping("/add")
+	public ResponseEntity<?> addToList(
+			@RequestParam(value = "listid", required = true) Long listID,
+			@Valid @RequestBody Collection<Long> locations,
+			Authentication auth) {
+
+
+		locationListService.addToList(listID, locations, auth);
+		return new ResponseEntity<>("List add request handled successfully.", HttpStatus.OK);
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.geoshare.backend.dto.LocationDTO;
@@ -107,12 +108,11 @@ public class LocationService {
 	
 	
 	
-	public boolean userOwnsLocation(String usernameGiven, Long locationID) {
+	public boolean userOwnsLocation(Authentication auth, Long locationID) {
 		
-		Location locToDelete = locationRepository.findByLocationID(locationID);
-		String usernameInDB = locToDelete.getUser().getUsername();
+		String usernameInDB = locationRepository.findByLocationID(locationID).getUser().getUsername();
 		
-		if (usernameInDB.equals(usernameGiven)) {
+		if (usernameInDB.equals(auth.getName())) {
 			return true;
 		} else {
 			return false;
