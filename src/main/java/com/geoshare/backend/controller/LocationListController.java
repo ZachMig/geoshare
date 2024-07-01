@@ -89,9 +89,18 @@ public class LocationListController {
 			@Valid @RequestBody Collection<Long> locations,
 			Authentication auth) {
 
-
 		locationListService.addToList(listID, locations, auth);
 		return new ResponseEntity<>("List add request handled successfully.", HttpStatus.OK);
+	}
+	
+	@PutMapping("/remove")
+	public ResponseEntity<?> removeFromList(
+			@RequestParam(value = "listid", required = true) Long listID,
+			@Valid @RequestBody Collection<Long> locations,
+			Authentication auth) {
+		
+		locationListService.removeFromList(listID, locations, auth);
+		return new ResponseEntity<>("List remove request handled successfully.", HttpStatus.OK);
 	}
 	
 }

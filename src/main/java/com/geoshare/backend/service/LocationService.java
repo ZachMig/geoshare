@@ -51,7 +51,7 @@ public class LocationService {
 	}
 		
 	public Location findByID(Long id) {
-		return locationRepository.findByLocationID(id);
+		return locationRepository.findByIDOrThrow(id);
 	}
 	
 	public void createLocation(LocationDTO locationDTO) {
@@ -65,16 +65,16 @@ public class LocationService {
 		lat = coords[0];
 		lng = coords[1];
 		
-		Optional<Country> country = countryRepository.findByID(countryID);
-		Optional<GeoshareUser> geoshareUser = userRepository.findById(userID);
+		Country country = countryRepository.findByIDOrThrow(countryID);
+		GeoshareUser geoshareUser = userRepository.findByIDOrThrow(userID);
 		
 		Location location = new Location(
 				url,
 				lat,
 				lng,
 				description,
-				country.get(),
-				geoshareUser.get());
+				country,
+				geoshareUser);
 		
 
 		//Maybe check lat and lng to see if this user has saved this loc already?
@@ -110,7 +110,7 @@ public class LocationService {
 	
 	public boolean userOwnsLocation(Authentication auth, Long locationID) {
 		
-		String usernameInDB = locationRepository.findByLocationID(locationID).getUser().getUsername();
+		String usernameInDB = locationRepository.findByIDOrThrow(locationID).getUser().getUsername();
 		
 		if (usernameInDB.equals(auth.getName())) {
 			return true;

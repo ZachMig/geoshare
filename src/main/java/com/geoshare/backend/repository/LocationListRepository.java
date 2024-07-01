@@ -1,11 +1,14 @@
 package com.geoshare.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import com.geoshare.backend.entity.LocationList;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Repository
 public interface LocationListRepository extends CrudRepository<LocationList, Long> {
@@ -24,6 +27,10 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 //	LocationList findByName(String name);
 	
 	@Query("SELECT L FROM LocationList L WHERE L.id = :id")
-	LocationList findByID(Long id);
+	Optional<LocationList> findByID(Long id);
 	
+	default	LocationList findByIDOrThrow(Long id) {
+		return findByID(id).orElseThrow(() -> 
+				new EntityNotFoundException("List not found in the database."));
+	}
 }

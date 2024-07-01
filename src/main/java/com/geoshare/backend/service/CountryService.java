@@ -19,13 +19,9 @@ public class CountryService {
 	private CountryRepository countryRepository;
 	
 	public Country findByID(Long id) {
-		Optional<Country> country = countryRepository.findByID(id);
+		Country country = countryRepository.findByIDOrThrow(id);
 		
-		if (!country.isPresent()) {
-			log.info("Unable to find country. " + id);
-		} 
-		
-		return country.get();
+		return country;
 	}
 	
 	public List<Country> findAll() {

@@ -7,6 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import com.geoshare.backend.entity.Location;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Repository
 public interface LocationRepository extends CrudRepository<Location, Long> {
 	
@@ -24,9 +26,10 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
 			+ "WHERE C.name = :countryName")
 	List<Location> findAllByCountry(String countryName);
 	
-	@Query("SELECT L FROM Location L WHERE L.id = :id")
-	Location findByLocationID(Long id);
-	
+	default Location findByIDOrThrow(Long id) {
+		return findById(id).orElseThrow( () ->
+			new EntityNotFoundException("Location not found in database."));
+	}
 	
 	
 }
