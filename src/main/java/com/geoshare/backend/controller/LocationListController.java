@@ -69,8 +69,8 @@ public class LocationListController {
 			@RequestParam(value = "listid", required = true) Long listID,
 			Authentication auth) {
 		
-			locationListService.deleteList(listID, auth);
-			return new ResponseEntity<>("List delete request handled successfully.", HttpStatus.OK);
+		locationListService.deleteList(listID, auth);
+		return new ResponseEntity<>("List delete request handled successfully.", HttpStatus.OK);
 	}
 	
 	@PutMapping("/update")

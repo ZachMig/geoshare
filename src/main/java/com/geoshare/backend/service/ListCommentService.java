@@ -27,7 +27,7 @@ public class ListCommentService {
 	}
 	
 	public ListComment findByID(Long id) {
-		return listCommentRepository.findByID(id);
+		return listCommentRepository.findByIDOrThrow(id);
 	}
 	
 }
