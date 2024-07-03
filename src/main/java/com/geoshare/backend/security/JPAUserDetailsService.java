@@ -19,11 +19,7 @@ public class JPAUserDetailsService implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		GeoshareUser geoUser = userRepository.findByUsername(username);
-		
-		if (geoUser == null) {
-			throw new UsernameNotFoundException("Unable to find user: " + username);
-		}
+		GeoshareUser geoUser = userRepository.findByUsernameOrThrow(username);
 		
 		return new SecurityUser(geoUser);
 	}

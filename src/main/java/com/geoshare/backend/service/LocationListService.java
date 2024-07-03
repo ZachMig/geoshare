@@ -71,10 +71,7 @@ public class LocationListService {
      */
 	public void createList(LocationListDTO listDTO, Authentication auth) {
 		
-		GeoshareUser listOwner = userRepository.findByUsername(auth.getName());
-		if (listOwner == null)  {
-			throw new EntityNotFoundException("User not found in database.");
-		}
+		GeoshareUser listOwner = userRepository.findByUsernameOrThrow(auth.getName());
 		
 		LocationList locationList = new LocationList(
 				listDTO.name(),

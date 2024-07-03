@@ -27,7 +27,7 @@ public class LocationCommentService {
 	}
 	
 	public LocationComment findById(Long id) {
-		return locationCommentRepository.findByID(id);
+		return locationCommentRepository.findByIDOrThrow(id);
 	}
 	
 }

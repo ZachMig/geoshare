@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
 import com.geoshare.backend.entity.LocationComment;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Repository
 public interface LocationCommentRepository extends CrudRepository<LocationComment, Long> {
@@ -20,7 +23,9 @@ public interface LocationCommentRepository extends CrudRepository<LocationCommen
 			+ "WHERE U.username = :username")
 	List<LocationComment> findAllByUser(String username);
 	
-	@Query("SELECT C FROM LocationComment C WHERE C.id = :id")
-	LocationComment findByID(Long id);
+	default LocationComment findByIDOrThrow(Long id) {
+		return findById(id).orElseThrow( () -> 
+			new EntityNotFoundException("Unable to find comment in database."));
+	}
 	
 }
