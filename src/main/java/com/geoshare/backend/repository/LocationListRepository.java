@@ -33,4 +33,13 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 		return findByID(id).orElseThrow(() -> 
 				new EntityNotFoundException("List not found in the database."));
 	}
+	
+	@Query("SELECT L FROM LocationList L WHERE L.name = :name")
+	Optional <LocationList> findByName(String name);
+	
+	default LocationList findByNameOrThrow(String name) {
+		return findByName(name).orElseThrow(() -> 
+			new EntityNotFoundException("List not found in the database."));
+	}
+	
 }

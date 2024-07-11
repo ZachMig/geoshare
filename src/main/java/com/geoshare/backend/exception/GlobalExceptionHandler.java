@@ -22,6 +22,11 @@ public class GlobalExceptionHandler {
 	    return new ResponseEntity<>("Entity Not Found: " + e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
+		return new ResponseEntity<>("Received Invalid Arguments: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGlobalException(Exception e, WebRequest request) {
 	    return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

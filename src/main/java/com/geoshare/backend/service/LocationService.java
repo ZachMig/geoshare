@@ -1,9 +1,10 @@
 package com.geoshare.backend.service;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,6 @@ public class LocationService {
 	private LocationRepository locationRepository;
 	private CountryRepository countryRepository;
 	private GeoshareUserRepository userRepository;
-	
-
 	
 	public LocationService(LocationRepository locationRepository, CountryRepository countryRepository,
 			GeoshareUserRepository userRepository) {
@@ -107,11 +106,13 @@ public class LocationService {
 	}
 	
 	
-	
 	public boolean userOwnsLocation(Authentication auth, Long locationID) {
 		
 		String usernameInDB = locationRepository.findByIDOrThrow(locationID).getUser().getUsername();
 		
+		
+		//TODO
+		//Change to equalsIgnoreCase() !!!
 		if (usernameInDB.equals(auth.getName())) {
 			return true;
 		} else {
@@ -120,8 +121,17 @@ public class LocationService {
 	}
 	
 	
-	public void deleteLocation(Long locationID) {
-		locationRepository.deleteById(locationID);
+	public void deleteLocation(Collection<Long> locations, Authentication auth) {
+		
+		for (Long locationID : locations) {
+			if (!userOwnsLocation(auth, locationID)) {
+				throw new AccessDeniedException("User: " + auth.getName() + " does not own location: " + locationID);
+			}
+		}
+		
+		for (Long locationID : locations) {
+			locationRepository.deleteById(locationID);
+		}
 	}
 	
 	
