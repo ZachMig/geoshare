@@ -1,5 +1,6 @@
 package com.geoshare.backend.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/locations")
 public class LocationController {
 	
-	@Autowired
 	private LocationService locationService;
+	
+	public LocationController(LocationService locationService) {
+		this.locationService = locationService;
+	}
 	
 	@GetMapping("/findall")
 	public List<Location> getLocations(
@@ -70,38 +74,24 @@ public class LocationController {
 	 *  google.com/maps/@
 	 */
 	@PostMapping("/create")
-	public HttpStatus createLocation(
+	public ResponseEntity<String> createLocation(
 			@Valid
 			@RequestBody
 			LocationDTO locationDTO) {
 		
-		try {
-			locationService.createLocation(locationDTO);
-			return HttpStatus.OK;
-		} catch (Exception e) {
-			log.info(e.getMessage());
-			return HttpStatus.BAD_REQUEST;
-		}
+		locationService.createLocation(locationDTO);
+		return new ResponseEntity<>("Create request ran with no errors.", HttpStatus.OK);
 		
 	}
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<String> deleteLocation(
-			@RequestParam(value = "lid", required = true) Long locationID,
+			@Valid @RequestBody(required = true) Collection<Long> locations,
 			Authentication auth) {
-		
-		if (locationService.userOwnsLocation(auth, locationID)) {
-			
-			try {
-				locationService.deleteLocation(locationID);
-				return new ResponseEntity<>("Delete request ran with no errors.", HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>("Erorr attempting to delete location: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-			}
-			
-		} else { //This user does not own this location they are trying to delete
-			return new ResponseEntity<>("Logged in user does not own this location.", HttpStatus.FORBIDDEN);
-		}
+	
+		locationService.deleteLocation(locations, auth);
+		return new ResponseEntity<>("Delete request ran with no errors.", HttpStatus.OK);
+	
 		
 	}
 	

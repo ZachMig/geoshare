@@ -26,8 +26,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/lists")
 public class LocationListController {
 
-	@Autowired
 	private LocationListService locationListService;
+	
+	public LocationListController(LocationListService locationListService) {
+		this.locationListService = locationListService;
+	}
 	
 	@GetMapping("/findall")
 	public List<LocationList> getLists(
@@ -44,13 +47,22 @@ public class LocationListController {
 		}
 		
 		throw new IllegalArgumentException("This request requires one search parameter.");
-		
 	}
 	
 	@GetMapping("/find")
-	public LocationList getList(
-			@RequestParam(value = "listid", required = true) Long listID) {
-		return locationListService.findByID(listID);
+	public ResponseEntity<LocationList> getList(
+			@RequestParam(value = "listid", required = false) Long listID,
+			@RequestParam(value = "name", required = false) String name) {
+		
+		if (listID == null) {
+			return new ResponseEntity<>(locationListService.findByID(listID), HttpStatus.OK);
+		}
+		
+		if (name == null) {
+			return new ResponseEntity<>(locationListService.findByName(name), HttpStatus.OK);
+		}
+		
+		throw new IllegalArgumentException("This request requires one search parameter.");
 	}
 	
 	@PostMapping("/create")

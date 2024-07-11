@@ -50,13 +50,9 @@ public class LocationListService {
 		return locationListRepository.findAllByUser(username);
 	}
 	
-//	public List<LocationList> findTopLiked(Long minLikes) {
-//		return locationListRepository.findTopLiked(minLikes);
-//	}
-	
-//	public LocationList findByName(String name) {
-//		return locationListRepository.findByName(name);
-//	}
+	public LocationList findByName(String name) {
+		return locationListRepository.findByNameOrThrow(name);
+	}
 
 	public LocationList findByID(Long listID) {
 		return locationListRepository.findByIDOrThrow(listID);
@@ -94,10 +90,10 @@ public class LocationListService {
      */
 	public boolean userOwnsList(Authentication auth, Long listID) {
 		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
-		
 		String usernameInDB = locationListRepository.findByIDOrThrow(listID).getUser().getUsername();
 		
+		//TODO
+		//Change to equalsIgnoreCase !!!
 		if (auth.getName().equals(usernameInDB)) {
 			return true;
 		} else {
@@ -118,6 +114,8 @@ public class LocationListService {
 		
 		String usernameInDB = locationRepository.findByIDOrThrow(locationID).getUser().getUsername();
 		
+		//TODO
+		//Change to equalsIgnoreCase !!!
 		if (usernameInDB.equals(auth.getName())) {
 			return true;
 		} else {
@@ -204,18 +202,17 @@ public class LocationListService {
 		 * 
 		locations.forEach((locationID) -> {
 			if(userOwnsLocation(auth, locationID)) {
-				list.addToLocations(locationRepository.findById(locationID).get());
+				list.addToLocations(locationRepository.findByIDOrThrow(locationID));
 			}
 		});
 		 */
 		
 		for (Long locationID: locations) {
 			if (userOwnsLocation(auth, locationID)) {
-				Optional<Location> location = locationRepository.findById(locationID);
-				if (location.isEmpty()) {
-					throw new EntityNotFoundException("Location identified by id: " + locationID + " not found in database.");
-				}
-				list.addToLocations(location.get());
+				
+				Location location = locationRepository.findByIDOrThrow(locationID);
+
+				list.addToLocations(location);
 			}
 		}
 		
