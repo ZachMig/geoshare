@@ -17,6 +17,8 @@ import lombok.Setter;
 @Entity
 @EqualsAndHashCode
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name="comment_list")
 public class ListComment {
 	
@@ -24,33 +26,21 @@ public class ListComment {
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private Long id;
 	
-	@Column(name="content")
+	@Column(name="content", nullable=false)
 	private String content;
 	
 	@ManyToOne
-	@JoinColumn(name="list_id")
+	@JoinColumn(name="list_id", nullable=false)
 	private LocationList locationList;
 	
 	@ManyToOne
-	@JoinColumn(name="user_id")
+	@JoinColumn(name="user_id", nullable=false)
 	private GeoshareUser user;
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public LocationList getLocationList() {
-		return locationList;
-	}
-
-	public GeoshareUser getUser() {
-		return user;
-	}
 	
+	@ManyToOne
+	@JoinColumn(name="parent_comment_id")
+	private ListComment parentComment;
+
 }
 
 

@@ -92,9 +92,7 @@ public class LocationListService {
 		
 		String usernameInDB = locationListRepository.findByIDOrThrow(listID).getUser().getUsername();
 		
-		//TODO
-		//Change to equalsIgnoreCase !!!
-		if (auth.getName().equals(usernameInDB)) {
+		if (auth.getName().equalsIgnoreCase(usernameInDB)) {
 			return true;
 		} else {
 			return false;
