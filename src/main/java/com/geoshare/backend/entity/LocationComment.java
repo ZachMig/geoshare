@@ -1,6 +1,7 @@
 package com.geoshare.backend.entity;
 
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,8 @@ import lombok.Setter;
 @Entity
 @EqualsAndHashCode
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name="comment_location")
 public class LocationComment {
 	
@@ -24,31 +27,19 @@ public class LocationComment {
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private Long id;
 	
-	@Column(name="content")
+	@Column(name="content", nullable=false)
 	private String content;
 	
 	@ManyToOne
-	@JoinColumn(name="location_id")
+	@JoinColumn(name="location_id", nullable=false)
 	private Location location;
 	
 	@ManyToOne
-	@JoinColumn(name="user_id")
+	@JoinColumn(name="user_id", nullable=false)
 	private GeoshareUser user;
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public GeoshareUser getUser() {
-		return user;
-	}
 	
+	@ManyToOne
+	@JoinColumn(name="parent_comment_id")
+	private LocationComment parentComment;
+
 }
