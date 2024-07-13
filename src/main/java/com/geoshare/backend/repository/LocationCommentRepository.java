@@ -13,6 +13,11 @@ import jakarta.persistence.EntityNotFoundException;
 @Repository
 public interface LocationCommentRepository extends CrudRepository<LocationComment, Long> {
 	
+	default LocationComment findByIDOrThrow(Long id) {
+		return findById(id).orElseThrow( () -> 
+			new EntityNotFoundException("Unable to find comment in database."));
+	}
+	
 	@Query("SELECT C FROM LocationComment C WHERE C.location.id = :locationID")
 	List<LocationComment> findAllByLocation(Long locationID);
 	
@@ -22,10 +27,4 @@ public interface LocationCommentRepository extends CrudRepository<LocationCommen
 	@Query("SELECT C FROM LocationComment C JOIN GeoshareUser U ON C.user.id = U.id "
 			+ "WHERE U.username = :username")
 	List<LocationComment> findAllByUser(String username);
-	
-	default LocationComment findByIDOrThrow(Long id) {
-		return findById(id).orElseThrow( () -> 
-			new EntityNotFoundException("Unable to find comment in database."));
-	}
-	
 }

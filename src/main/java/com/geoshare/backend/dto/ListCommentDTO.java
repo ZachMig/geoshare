@@ -14,6 +14,5 @@ public record ListCommentDTO(
 		Long listID, 
 		
 		@Max(value = Long.MAX_VALUE)
-		@NotNull
-		Long userID) 
+		Long parentCommentID) 
 {}

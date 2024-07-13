@@ -63,6 +63,4 @@ public class Location {
 	@ManyToMany(mappedBy="locations", fetch = FetchType.LAZY)
 	private Set<LocationList> lists;
 	
-	
-	
 }

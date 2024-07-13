@@ -65,6 +65,8 @@ public class LocationList {
     )
 	private Set<Location> locations;
 	
+	
+	
 	public boolean addToLocations(Location location) {
 		return locations.add(location);
 	}

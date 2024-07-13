@@ -12,8 +12,12 @@ import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.entity.Country;
 import com.geoshare.backend.entity.GeoshareUser;
 import com.geoshare.backend.entity.Location;
+import com.geoshare.backend.entity.LocationComment;
+import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.repository.CountryRepository;
 import com.geoshare.backend.repository.GeoshareUserRepository;
+import com.geoshare.backend.repository.LocationCommentRepository;
+import com.geoshare.backend.repository.LocationListRepository;
 import com.geoshare.backend.repository.LocationRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +29,21 @@ public class LocationService {
 	private LocationRepository locationRepository;
 	private CountryRepository countryRepository;
 	private GeoshareUserRepository userRepository;
+	private LocationListRepository locationListRepository;
+	private LocationCommentRepository locationCommentRepository;
 	
-	public LocationService(LocationRepository locationRepository, CountryRepository countryRepository,
-			GeoshareUserRepository userRepository) {
+	public LocationService(
+			LocationRepository locationRepository, 
+			CountryRepository countryRepository,
+			GeoshareUserRepository userRepository,
+			LocationListRepository locationListRepository,
+			LocationCommentRepository locationCommentRepository) {
+		
 		this.locationRepository = locationRepository;
 		this.countryRepository = countryRepository;
 		this.userRepository = userRepository;
+		this.locationListRepository = locationListRepository;
+		this.locationCommentRepository = locationCommentRepository;
 	}
 
 	public List<Location> findAllByUser(Long userID) {
@@ -121,6 +134,9 @@ public class LocationService {
 	
 	public void deleteLocation(Collection<Long> locations, Authentication auth) {
 		
+		//Check that the current user owns each of these locations
+		//TODO
+		//Look for a better way to do this instead of a bunch of individual SQL queries
 		for (Long locationID : locations) {
 			if (!userOwnsLocation(auth, locationID)) {
 				throw new AccessDeniedException("User: " + auth.getName() + " does not own location: " + locationID);
@@ -128,7 +144,29 @@ public class LocationService {
 		}
 		
 		for (Long locationID : locations) {
-			locationRepository.deleteById(locationID);
+			
+			Location location = locationRepository.findByIDOrThrow(locationID);
+			
+			//Handle removing this location from all associated LocationLists
+			Collection<LocationList> listsThisLocationIsPartOf = locationListRepository.findAllByLocationID(locationID);
+			for(LocationList locationList : listsThisLocationIsPartOf) {
+				locationList.removeFromLocations(location);
+			}
+			
+			//Delete all comments on this Location
+			//TODO
+			//Maybe archive them?
+			Collection<LocationComment> locationComments = locationCommentRepository.findAllByLocation(locationID);
+			for (LocationComment comment : locationComments) {
+				comment.setParentComment(null); //Remove all dependencies between these comments
+			}
+			locationCommentRepository.saveAll(locationComments); //Update with removed dependencies
+			locationCommentRepository.deleteAll(locationComments); //Delete all associated comments
+			
+			
+			
+			//Finally delete the Location
+			locationRepository.delete(location);
 		}
 	}
 	
