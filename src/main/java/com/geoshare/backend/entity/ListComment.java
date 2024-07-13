@@ -22,6 +22,13 @@ import lombok.Setter;
 @Table(name="comment_list")
 public class ListComment {
 	
+	public ListComment(String content, LocationList locationList, GeoshareUser user, ListComment parentComment) {
+		this.content = content;
+		this.locationList = locationList;
+		this.user = user;
+		this.parentComment = parentComment;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private Long id;

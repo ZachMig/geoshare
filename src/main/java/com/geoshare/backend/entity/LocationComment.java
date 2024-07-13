@@ -23,6 +23,14 @@ import lombok.Setter;
 @Table(name="comment_location")
 public class LocationComment {
 	
+	
+	public LocationComment(String content, Location location, GeoshareUser user, LocationComment parentComment) {
+		this.content = content;
+		this.location = location;
+		this.user = user;
+		this.parentComment = parentComment;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private Long id;
@@ -39,7 +47,7 @@ public class LocationComment {
 	private GeoshareUser user;
 	
 	@ManyToOne
-	@JoinColumn(name="parent_comment_id")
+	@JoinColumn(name="parent_comment_id", nullable=true)
 	private LocationComment parentComment;
 
 }

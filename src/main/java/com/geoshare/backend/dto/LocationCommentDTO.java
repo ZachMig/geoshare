@@ -15,8 +15,7 @@ public record LocationCommentDTO(
 	Long locationID,
 	
 	@Max(value = Long.MAX_VALUE)
-	@NotNull
-	Long userID
+	Long parentCommentID
 	) 
 {}
 

@@ -13,8 +13,10 @@ import jakarta.persistence.EntityNotFoundException;
 @Repository
 public interface ListCommentRepository extends CrudRepository<ListComment, Long> {
 	
-	@Query("SELECT C FROM ListComment C WHERE C.locationList.id = :listID")
-	List<ListComment> findAllByList(Long listID);
+	default ListComment findByIDOrThrow(Long id) {
+		return findById(id).orElseThrow( () -> 
+			new EntityNotFoundException("Unable to find comment in database."));
+	}
 	
 	@Query("SELECT C FROM ListComment C WHERE C.user.id = :userID")
 	List<ListComment> findAllByUser(Long userID);
@@ -23,9 +25,7 @@ public interface ListCommentRepository extends CrudRepository<ListComment, Long>
 			+ "WHERE U.username = :username")
 	List<ListComment> findAllByUser(String username);
 	
-	default ListComment findByIDOrThrow(Long id) {
-		return findById(id).orElseThrow( () -> 
-			new EntityNotFoundException("Unable to find comment in database."));
-	}
+	@Query("SELECT C FROM ListComment C WHERE C.locationList.id = :listID")
+	List<ListComment> findAllByList(Long listID);
 	
 }
