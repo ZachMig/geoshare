@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-sql_init.txt
+sql_setup/
 
 ### STS ###
 .apt_generated

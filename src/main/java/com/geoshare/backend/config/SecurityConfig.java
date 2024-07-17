@@ -1,5 +1,7 @@
 package com.geoshare.backend.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +16,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.geoshare.backend.security.JPAUserDetailsService;
 import com.geoshare.backend.security.Jwks;
@@ -48,6 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             http
             		.csrf(csrf -> csrf.disable())
+            		.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeHttpRequests((authorizeHttpRequests) ->
                             authorizeHttpRequests
                             		.requestMatchers("/api/users/create").permitAll()
@@ -57,6 +63,22 @@ public class SecurityConfig {
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .oauth2ResourceServer((oauth) -> oauth.jwt((jwt) -> jwt.decoder(jwtDecoder())));
             return http.build();
+    }
+    
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+    	CorsConfiguration corsConfig = new CorsConfiguration();
+    	UrlBasedCorsConfigurationSource urlCorsConfig = new UrlBasedCorsConfigurationSource();
+    	
+    	corsConfig.setAllowCredentials(true);
+    	corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
+    	corsConfig.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+    	corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+    	
+        urlCorsConfig.registerCorsConfiguration("/**", corsConfig);
+        
+        return urlCorsConfig;
     }
     
     @Bean

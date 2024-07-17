@@ -1,0 +1,1 @@
+change locations/findall in service layer to sort returned locations by thsoe belonging to nolist, and then for each list all the locations per list
