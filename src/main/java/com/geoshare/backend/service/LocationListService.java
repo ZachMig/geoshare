@@ -3,11 +3,14 @@ package com.geoshare.backend.service;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.geoshare.backend.dto.ListContainer;
+import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.dto.LocationListDTO;
 import com.geoshare.backend.entity.GeoshareUser;
 import com.geoshare.backend.entity.ListComment;
@@ -61,6 +64,27 @@ public class LocationListService {
 	public LocationList findByID(Long listID) {
 		return locationListRepository.findByIDOrThrow(listID);
 	}
+	
+	public ListContainer getFormattedLists(String username, Authentication auth) {
+		
+		//TODO
+		//If requested lists are private and not owned by logged in user, do not return them
+		
+		List<LocationDTO> unlisted = locationRepository.findUnlistedByUser(username)
+				.stream()
+				.map(DTOMapper::mapLocationDTO)
+				.collect(Collectors.toList());
+		
+		List<LocationListDTO> listed = locationListRepository.findListsWithLocationsByUser(username)
+				.stream()
+				.map(DTOMapper::mapListDTO)
+				.collect(Collectors.toList());
+		
+		return new ListContainer(unlisted, listed);
+		
+		
+	}
+	
 	
     /**
      * Creates a new Location List based on the provided DTO.

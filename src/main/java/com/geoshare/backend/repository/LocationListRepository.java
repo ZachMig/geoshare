@@ -26,9 +26,6 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
     		+ "WHERE LOCATION.id = :locationID")
 	List<LocationList> findAllByLocationID(Long locationID);
 
-    
-    
-    
 	@Query("SELECT L FROM LocationList L WHERE L.id = :id")
 	Optional<LocationList> findByID(Long id);
 	
@@ -44,5 +41,9 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 		return findByName(name).orElseThrow(() -> 
 			new EntityNotFoundException("List not found in the database."));
 	}
+	
+	@Query("SELECT L FROM LocationList L JOIN FETCH L.locations "
+			+ "JOIN GeoshareUser U on L.user.username = :username")
+	List<LocationList> findListsWithLocationsByUser(String username);
 	
 }

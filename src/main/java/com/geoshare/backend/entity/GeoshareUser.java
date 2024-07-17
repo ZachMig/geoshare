@@ -1,5 +1,7 @@
 package com.geoshare.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,7 @@ public class GeoshareUser {
 	@Column(name="username", unique=true)
 	private String username;
 	
+	@JsonIgnore
 	@Column(name="password")
 	private String password;
 	
