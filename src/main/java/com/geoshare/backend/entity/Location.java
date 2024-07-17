@@ -34,6 +34,7 @@ public class Location {
 		this.country = country;
 		this.user = user;
 		this.lists = new HashSet<>();
+		this.listed = Long.valueOf(0);
 	}
 
 	@Id
@@ -62,5 +63,8 @@ public class Location {
 	
 	@ManyToMany(mappedBy="locations", fetch = FetchType.LAZY)
 	private Set<LocationList> lists;
+	
+	@Column(name="listed")
+	private Long listed;
 	
 }

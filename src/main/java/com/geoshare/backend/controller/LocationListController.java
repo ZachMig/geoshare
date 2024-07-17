@@ -3,7 +3,6 @@ package com.geoshare.backend.controller;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geoshare.backend.dto.ListContainer;
 import com.geoshare.backend.dto.LocationListDTO;
+import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.service.LocationListService;
 
@@ -47,6 +48,14 @@ public class LocationListController {
 		}
 		
 		throw new IllegalArgumentException("This request requires one search parameter.");
+	}
+	
+	@GetMapping("/findformatted")
+	public ListContainer getFormattedLists(
+			@RequestParam(value = "uname", required = true) String username,
+			Authentication auth) {
+		
+		return locationListService.getFormattedLists(username, auth);
 	}
 	
 	@GetMapping("/find")
