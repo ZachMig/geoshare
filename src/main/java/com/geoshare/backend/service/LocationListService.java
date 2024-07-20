@@ -1,8 +1,10 @@
 package com.geoshare.backend.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -70,10 +72,18 @@ public class LocationListService {
 		//TODO
 		//If requested lists are private and not owned by logged in user, do not return them
 		
-		List<LocationDTO> unlisted = locationRepository.findUnlistedByUser(username)
+		Set<LocationDTO> locs = locationRepository.findUnlistedByUser(username)
 				.stream()
 				.map(DTOMapper::mapLocationDTO)
-				.collect(Collectors.toList());
+				.collect(Collectors.toSet());
+
+		LocationListDTO unlisted = new LocationListDTO(
+				"Unlisted",
+				"Unlisted",
+				true,
+				locs);
+				
+				
 		
 		List<LocationListDTO> listed = locationListRepository.findListsWithLocationsByUser(username)
 				.stream()
@@ -241,15 +251,23 @@ public class LocationListService {
 		});
 		 */
 		
+		List<Location> locIterable = new ArrayList<Location>();
 		for (Long locationID: locations) {
 			if (userOwnsLocation(auth, locationID)) {
 				
 				Location location = locationRepository.findByIDOrThrow(locationID);
-
+				//Add this location to the list
 				list.addToLocations(location);
+
+				//Make sure this location is tagged as listed
+				if (location.getListed() == 0) {
+					location.setListed((long) 1);
+				}
+				locIterable.add(location);
 			}
 		}
 		
+		locationRepository.saveAll(locIterable);
 		locationListRepository.save(list);
 	}
 	
