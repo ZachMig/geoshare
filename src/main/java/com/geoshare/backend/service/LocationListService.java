@@ -78,6 +78,7 @@ public class LocationListService {
 				.collect(Collectors.toSet());
 
 		LocationListDTO unlisted = new LocationListDTO(
+				(long) -1,
 				"Unlisted",
 				"Unlisted",
 				true,

@@ -22,6 +22,14 @@ public interface MetaRepository extends CrudRepository<Meta, Long> {
 			new EntityNotFoundException("Meta not found in database"));
 	}
 	
+	@Query("SELECT M FROM Meta M WHERE M.name = :name")
+	Optional<Meta> findByName(String name);
+	
+	default Meta findByNameOrThrow(String name) {
+		return findByName(name).orElseThrow(() -> 
+			new EntityNotFoundException("Meta not found in database"));
+	}
+	
 	List<Meta> findAll();
 	
 }

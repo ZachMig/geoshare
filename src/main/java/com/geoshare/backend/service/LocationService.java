@@ -14,11 +14,13 @@ import com.geoshare.backend.entity.GeoshareUser;
 import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.entity.LocationComment;
 import com.geoshare.backend.entity.LocationList;
+import com.geoshare.backend.entity.Meta;
 import com.geoshare.backend.repository.CountryRepository;
 import com.geoshare.backend.repository.GeoshareUserRepository;
 import com.geoshare.backend.repository.LocationCommentRepository;
 import com.geoshare.backend.repository.LocationListRepository;
 import com.geoshare.backend.repository.LocationRepository;
+import com.geoshare.backend.repository.MetaRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,19 +33,22 @@ public class LocationService {
 	private GeoshareUserRepository userRepository;
 	private LocationListRepository locationListRepository;
 	private LocationCommentRepository locationCommentRepository;
+	private MetaRepository metaRepository;
 	
 	public LocationService(
 			LocationRepository locationRepository, 
 			CountryRepository countryRepository,
 			GeoshareUserRepository userRepository,
 			LocationListRepository locationListRepository,
-			LocationCommentRepository locationCommentRepository) {
+			LocationCommentRepository locationCommentRepository,
+			MetaRepository metaRepository) {
 		
 		this.locationRepository = locationRepository;
 		this.countryRepository = countryRepository;
 		this.userRepository = userRepository;
 		this.locationListRepository = locationListRepository;
 		this.locationCommentRepository = locationCommentRepository;
+		this.metaRepository = metaRepository;
 	}
 
 	public List<Location> findAllByUser(Long userID) {
@@ -70,15 +75,17 @@ public class LocationService {
 		BigDecimal lat, lng;
 		String url = locationDTO.url();
 		String description = locationDTO.description();
-		Long countryID = locationDTO.countryID();
+		String countryName = locationDTO.countryName();
 		Long userID = locationDTO.userID();
+		String metaName = locationDTO.meta();
 		
 		BigDecimal[] coords = parseLatAndLong(url);
 		lat = coords[0];
 		lng = coords[1];
 		
-		Country country = countryRepository.findByIDOrThrow(countryID);
+		Country country = countryRepository.findByNameOrThrow(countryName);
 		GeoshareUser geoshareUser = userRepository.findByIDOrThrow(userID);
+		Meta meta = metaRepository.findByNameOrThrow(metaName);
 		
 		Location location = new Location(
 				url,
@@ -86,7 +93,8 @@ public class LocationService {
 				lng,
 				description,
 				country,
-				geoshareUser);
+				geoshareUser,
+				meta);
 		
 
 		//Maybe check lat and lng to see if this user has saved this loc already?
