@@ -22,6 +22,14 @@ public interface CountryRepository extends CrudRepository<Country, Long> {
 				new EntityNotFoundException("Country not found in database"));
 	}
 	
+	@Query("SELECT C FROM Country C WHERE C.name = :name") 
+	Optional<Country> findByName(String name);
+	
+	default Country findByNameOrThrow(String name) {
+		return findByName(name).orElseThrow( () -> 
+			new EntityNotFoundException("Country not found in database"));
+	}
+	
 	List<Country> findAll();
 	
 }

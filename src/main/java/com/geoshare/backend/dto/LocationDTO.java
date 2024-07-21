@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 
 public record LocationDTO (
 	
+	@Max(value = Long.MAX_VALUE)
+	Long id,
+		
 	@Size(max = 4096)
 	@NotBlank
 	String url,
@@ -15,13 +18,18 @@ public record LocationDTO (
 	@NotBlank
 	String description,
 	
+	//Change to country name
 	@Max(value = Long.MAX_VALUE)
 	@NotNull
-	Long countryID,
+	String countryName,
 	
 	@Max(value = Long.MAX_VALUE)
 	@NotNull
-	Long userID
+	Long userID,
+	
+	@Size(max = 65535)
+	@NotBlank
+	String meta
 	)
 	{}
 	

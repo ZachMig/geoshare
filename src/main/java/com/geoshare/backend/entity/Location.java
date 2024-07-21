@@ -26,7 +26,7 @@ import lombok.Setter;
 public class Location {
 	
 	public Location(String url, BigDecimal lat, BigDecimal lng, String description, Country country,
-			GeoshareUser user) {
+			GeoshareUser user, Meta meta) {
 		this.url = url;
 		this.lat = lat;
 		this.lng = lng;
@@ -35,6 +35,7 @@ public class Location {
 		this.user = user;
 		this.lists = new HashSet<>();
 		this.listed = Long.valueOf(0);
+		this.meta = meta;
 	}
 
 	@Id
@@ -66,5 +67,9 @@ public class Location {
 	
 	@Column(name="listed")
 	private Long listed;
+	
+	@ManyToOne
+	@JoinColumn(name="meta_id")
+	private Meta meta;
 	
 }

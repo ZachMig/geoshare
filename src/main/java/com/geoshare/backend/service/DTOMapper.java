@@ -14,10 +14,12 @@ public class DTOMapper {
 	public static LocationDTO mapLocationDTO(Location location) {
 		
 		return new LocationDTO(
+				location.getId(),
 				location.getUrl(),
 				location.getDescription(),
-				location.getCountry().getID(),
-				location.getUser().getId()
+				location.getCountry().getName(),
+				location.getUser().getId(),
+				location.getMeta().getName()
 		);
 		
 	}
@@ -30,6 +32,7 @@ public class DTOMapper {
 				.collect(Collectors.toSet());
 		
 		return new LocationListDTO( 
+				locationList.getId(),
 				locationList.getName(),
 				locationList.getDescription(),
 				locationList.isPublic(),
