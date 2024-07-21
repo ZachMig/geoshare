@@ -15,7 +15,6 @@
 	<description>Backend for Geoshare Application</description>
 	<properties>
 		<java.version>21</java.version>
-		<jar.finalName>geoshare-backend</jar.finalName>
 	</properties>
 	<dependencies>
 	
@@ -71,6 +70,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>geoshare-backend</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
