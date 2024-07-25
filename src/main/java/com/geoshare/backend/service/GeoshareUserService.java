@@ -29,4 +29,8 @@ public class GeoshareUserService {
 		userRepository.save(userEntity);
 	}
 	
+	public Long findUserIdByUsername(String username) {
+		return userRepository.findByUsernameOrThrow(username).getId();
+	}
+	
 }

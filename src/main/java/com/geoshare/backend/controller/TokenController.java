@@ -1,6 +1,8 @@
 package com.geoshare.backend.controller;
 
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geoshare.backend.dto.LoginRequest;
+import com.geoshare.backend.dto.LoginRequestDTO;
+import com.geoshare.backend.dto.LoginResponseDTO;
+import com.geoshare.backend.service.GeoshareUserService;
 import com.geoshare.backend.service.TokenService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,26 +26,19 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenController {
 
 	private final TokenService tokenService;
-	private final AuthenticationManager authManager;
-	private final PasswordEncoder passwordEncoder;
+
 	
-	public TokenController(TokenService tokenService, AuthenticationManager authManager, PasswordEncoder passwordEncoder) {
+	public TokenController(TokenService tokenService) {
 		this.tokenService = tokenService;
-		this.authManager = authManager;
-		this.passwordEncoder = passwordEncoder;
+	
 	}
 	
-	
+	//TODO
+	//Move this to service layer
 	@PostMapping("/gettoken")
-	public String issueToken(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
-		log.info("Username: " + loginRequest.username() + " and password: " + loginRequest.password());
-		Authentication authentication = authManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						loginRequest.username(), 
-						loginRequest.password()));
-		String token = tokenService.generateToken(authentication);
-		log.info(token);
-		return token;
+	public ResponseEntity<LoginResponseDTO> issueToken(@RequestBody LoginRequestDTO loginRequest) {
+		LoginResponseDTO loginResponse = tokenService.loginUser(loginRequest);
+		return new ResponseEntity<>(loginResponse, HttpStatus.OK);
 	}
 	
 	
