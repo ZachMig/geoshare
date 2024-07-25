@@ -18,18 +18,17 @@ public record LocationDTO (
 	@NotBlank
 	String description,
 	
-	//Change to country name
-	@Max(value = Long.MAX_VALUE)
+	@Size(max = 65535)
 	@NotNull
 	String countryName,
 	
-	@Max(value = Long.MAX_VALUE)
-	@NotNull
-	Long userID,
-	
 	@Size(max = 65535)
 	@NotBlank
-	String meta
+	String meta,
+	
+	@Max(value = Long.MAX_VALUE)
+	@NotNull
+	Long userID
 	)
 	{}
 	
