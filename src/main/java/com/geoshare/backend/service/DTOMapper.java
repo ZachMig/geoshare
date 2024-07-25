@@ -18,8 +18,8 @@ public class DTOMapper {
 				location.getUrl(),
 				location.getDescription(),
 				location.getCountry().getName(),
-				location.getUser().getId(),
-				location.getMeta().getName()
+				location.getMeta().getName(),
+				location.getUser().getId()
 		);
 		
 	}
