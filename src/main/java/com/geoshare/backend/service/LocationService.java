@@ -127,36 +127,18 @@ public class LocationService {
 	}
 	
 	
-	public boolean userOwnsLocation(Authentication auth, Long locationID) {
+	public void deleteLocation(Collection<Long> locationIDs, Authentication auth) {
 		
-		String usernameInDB = locationRepository.findByIDOrThrow(locationID).getUser().getUsername();
+		List<Location> locations = locationRepository.findAllById(locationIDs);
 		
-		
-		if (usernameInDB.equalsIgnoreCase(auth.getName())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
-	public void deleteLocation(Collection<Long> locations, Authentication auth) {
-		
-		//Check that the current user owns each of these locations
-		//TODO
-		//Look for a better way to do this instead of a bunch of individual SQL queries
-		for (Long locationID : locations) {
-			if (!userOwnsLocation(auth, locationID)) {
-				throw new AccessDeniedException("User: " + auth.getName() + " does not own location: " + locationID);
-			}
+		if (!HelperService.userOwns(auth, locations)) {
+			throw new AccessDeniedException("User: " + auth.getName() + " does not own at least one of the given locations.");
 		}
 		
-		for (Long locationID : locations) {
-			
-			Location location = locationRepository.findByIDOrThrow(locationID);
+		for (Location location : locations) {
 			
 			//Handle removing this location from all associated LocationLists
-			Collection<LocationList> listsThisLocationIsPartOf = locationListRepository.findAllByLocationID(locationID);
+			Collection<LocationList> listsThisLocationIsPartOf = locationListRepository.findAllByLocationID(location.getId());
 			for(LocationList locationList : listsThisLocationIsPartOf) {
 				locationList.removeFromLocations(location);
 			}
@@ -164,14 +146,12 @@ public class LocationService {
 			//Delete all comments on this Location
 			//TODO
 			//Maybe archive them?
-			Collection<LocationComment> locationComments = locationCommentRepository.findAllByLocation(locationID);
+			Collection<LocationComment> locationComments = locationCommentRepository.findAllByLocation(location.getId());
 			for (LocationComment comment : locationComments) {
 				comment.setParentComment(null); //Remove all dependencies between these comments
 			}
 			locationCommentRepository.saveAll(locationComments); //Update with removed dependencies
 			locationCommentRepository.deleteAll(locationComments); //Delete all associated comments
-			
-			
 			
 			//Finally delete the Location
 			locationRepository.delete(location);

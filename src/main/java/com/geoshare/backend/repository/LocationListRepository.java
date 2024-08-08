@@ -1,11 +1,13 @@
 package com.geoshare.backend.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
 import com.geoshare.backend.entity.LocationList;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -45,5 +47,8 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 	@Query("SELECT L FROM LocationList L JOIN FETCH L.locations "
 			+ "JOIN GeoshareUser U on L.user.username = :username")
 	List<LocationList> findListsWithLocationsByUser(String username);
+	
+	@Query("SELECT L FROM LocationList L WHERE L.id in :ids")
+	List<LocationList> findAllById(Collection<Long> ids);
 	
 }

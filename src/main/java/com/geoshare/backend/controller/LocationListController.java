@@ -82,7 +82,7 @@ public class LocationListController {
 			Authentication auth) {
 		
 		locationListService.createList(listDTO, auth);
-		return new ResponseEntity<>("List create request handled successfully.", HttpStatus.OK);
+		return new ResponseEntity<>("List create request handled successfully.", HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/delete")
@@ -105,12 +105,13 @@ public class LocationListController {
 	}
 	
 	@PutMapping("/add")
-	public ResponseEntity<?> addToList(
-			@RequestParam(value = "listid", required = true) Long listID,
-			@Valid @RequestBody Collection<Long> locations,
+	public ResponseEntity<?> addLocationsToLists(
+			@Valid @RequestBody 
+			Collection<Long> lists,
+			Collection<Long> locations,
 			Authentication auth) {
 
-		locationListService.addToList(listID, locations, auth);
+		locationListService.addLocationsToLists(lists, locations, auth);
 		return new ResponseEntity<>("List add request handled successfully.", HttpStatus.OK);
 	}
 	

@@ -1,10 +1,12 @@
 package com.geoshare.backend.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
 import com.geoshare.backend.entity.Location;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -35,6 +37,8 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
 			+ "WHERE U.username = :username AND L.listed = 0")
 	List<Location> findUnlistedByUser(String username);
 	
+	@Query("SELECT L FROM Location L WHERE L.id IN :ids")
+	List<Location> findAllById(Collection<Long> ids);
 }
 
 
