@@ -1,6 +1,8 @@
 package com.geoshare.backend.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,40 +15,27 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class GeoshareUserController {
 
 	private GeoshareUserService userService;
 	
-	public UserController(GeoshareUserService userService) {
+	public GeoshareUserController(GeoshareUserService userService) {
 		this.userService = userService;
 	}
 	
 	@PostMapping("/create")
-	public HttpStatus createUser(
+	public ResponseEntity<String> createUser(
 			@Valid
 			@RequestBody GeoshareUserDTO userDTO) {
 		
-		try {
-			this.userService.createUser(userDTO);
-			return HttpStatus.OK;
-		} catch (Exception e) {
-			return HttpStatus.BAD_REQUEST;
-		}
+		userService.createUser(userDTO);
+		
+		return new ResponseEntity<>("User create request handled successfully.", HttpStatus.OK);
 	}
 	
-//	@PostMapping("/create")
-//	public ResponseEntity<?> createUser(
-//			@Valid
-//			@RequestBody GeoshareUserDTO userDTO) {
-//		
-//		try {
-//			this.userService.createUser(userDTO);
-//			return new ResponseEntity<>(HttpStatus.OK);
-//		} catch (Exception e) {
-//	        return new ResponseEntity(this.errorMapper.createErrorMap(e), HttpStatus.BAD_REQUEST);
-//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//		}
-//		
-//	}
+	@GetMapping("/findall")
+	public ResponseEntity<?> findAllUsers() {
+		return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+	}
 	
 }
