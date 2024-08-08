@@ -33,6 +33,7 @@ public class GeoshareUser {
 	@Column(name="password")
 	private String password;
 	
+	@JsonIgnore
 	@Column(name="roles")
 	private String roles;
 	

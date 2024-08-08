@@ -58,6 +58,9 @@ public class SecurityConfig {
                             authorizeHttpRequests
                             		.requestMatchers("/api/users/create").permitAll()
                             		.requestMatchers("/api/auth/gettoken").permitAll()
+                            		.requestMatchers("/api/countries/findall").permitAll()
+                            		.requestMatchers("/api/metas/findall").permitAll()
+                            		.requestMatchers("/api/users/findall").permitAll()
                             		.anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

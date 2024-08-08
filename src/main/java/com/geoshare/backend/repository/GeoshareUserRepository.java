@@ -1,10 +1,12 @@
 package com.geoshare.backend.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
 import com.geoshare.backend.entity.GeoshareUser;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -24,5 +26,7 @@ public interface GeoshareUserRepository extends CrudRepository<GeoshareUser, Lon
 	
 	@Query("SELECT U FROM GeoshareUser U WHERE U.username = :username")
 	Optional<GeoshareUser> findByUsername(String username);
+	
+	List<GeoshareUser> findAll();
 	
 }
