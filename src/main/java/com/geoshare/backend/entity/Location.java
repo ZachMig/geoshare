@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.geoshare.backend.parents.Ownable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name="location")
-public class Location {
+public class Location implements Ownable {
 	
 	public Location(String url, BigDecimal lat, BigDecimal lng, String description, Country country,
 			GeoshareUser user, Meta meta) {

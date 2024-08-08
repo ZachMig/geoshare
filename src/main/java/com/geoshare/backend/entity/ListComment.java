@@ -1,6 +1,8 @@
 package com.geoshare.backend.entity;
 
 
+import com.geoshare.backend.parents.Ownable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name="comment_list")
-public class ListComment {
+public class ListComment implements Ownable {
 	
 	public ListComment(String content, LocationList locationList, GeoshareUser user, ListComment parentComment) {
 		this.content = content;

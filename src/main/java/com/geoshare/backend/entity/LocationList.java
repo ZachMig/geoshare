@@ -3,6 +3,8 @@ package com.geoshare.backend.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.geoshare.backend.parents.Ownable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name="list")
-public class LocationList {
+public class LocationList implements Ownable {
 	
 	public LocationList(String name, String description, boolean isPublic, Long likeCount, GeoshareUser user) {
 		this.name = name;

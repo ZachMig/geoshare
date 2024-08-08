@@ -1,6 +1,5 @@
 package com.geoshare.backend.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -119,48 +118,6 @@ public class LocationListService {
 	}
 	
     /**
-     * Checks if the logged in user owns the LocationList identified by listID.
-     *
-     * @param auth       The authentication object representing the logged in user.
-     * @param list The ID of the Location to check ownership of.
-     * @return true if the logged in user owns the LocationList, otherwise false.
-     * @throws AccessDeniedException if the logged in user does not own the specified LocationList.
-     * @throws EntityNotFoundException if the LocationList with listID was not found in the database.
-     */
-	public boolean userOwnsList(Authentication auth, Long listID) {
-		
-		String usernameInDB = locationListRepository.findByIDOrThrow(listID).getUser().getUsername();
-		
-		if (auth.getName().equalsIgnoreCase(usernameInDB)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-    /**
-     * Checks if the logged in user owns the Location identified by locationID.
-     *
-     * @param auth       The authentication object representing the logged in user.
-     * @param locationID The ID of the Location to check ownership of.
-     * @return true if the logged in user owns the Location, otherwise false.
-     * @throws AccessDeniedException if the logged in user does not own the specified Location.
-     * @throws EntityNotFoundException if the Location with locationID was not found in the database.
-     */
-	public boolean userOwnsLocation(Authentication auth, Long locationID) {
-		
-		String usernameInDB = locationRepository.findByIDOrThrow(locationID).getUser().getUsername();
-		
-		//TODO
-		//Change to equalsIgnoreCase !!!
-		if (usernameInDB.equals(auth.getName())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-    /**
      * Deletes a LocationList identified by listID. Associated Locations are not deleted but 
      * 	the relationship between the Location and LocationList is.
      *
@@ -171,12 +128,12 @@ public class LocationListService {
      */
 	public void deleteList(Long listID, Authentication auth) {
 		
+		LocationList list = locationListRepository.findByIDOrThrow(listID);
+		
 		//Check is requesting user owns this list
-		if (!userOwnsList(auth, listID)) {
+		if (!HelperService.userOwns(auth, List.of(list))) {
 			throw new AccessDeniedException("User does not own this list.");
 		}
-		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
 		
 		//Remove all locations from this list, not sure if this step is actually required depending on how JPA works under the hood
 		list.setLocations(new HashSet<Location>());
@@ -204,13 +161,13 @@ public class LocationListService {
      * @throws EntityNotFoundException if the LocationList with listID was not found in the database.
      */
 	public void updateList(Long listID, LocationListDTO listDTO, Authentication auth) {
+
+		LocationList list = locationListRepository.findByIDOrThrow(listID);
 		
 		//Check is requesting user owns this list
-		if (!userOwnsList(auth, listID)) {
+		if (!HelperService.userOwns(auth, List.of(list))) {
 			throw new AccessDeniedException("User does not own this list.");
 		}
-		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
 		
 		list.setName(listDTO.name());
 		list.setDescription(listDTO.description());
@@ -230,46 +187,63 @@ public class LocationListService {
      * @throws EntityNotFoundException if the Location List with listID was not found in the database,
      *                                 or if any of the Locations were not found in the database.
      */
-	public void addToList(Long listID, Collection<Long> locations, Authentication auth) {
+	public void addLocationsToLists(Collection<Long> listIDs, Collection<Long> locationIDs, Authentication auth) {
 		
-		//Check is requesting user owns this list
-		if (!userOwnsList(auth, listID)) {
-			throw new AccessDeniedException("User does not own this list.");
+		Collection<LocationList> lists = locationListRepository.findAllById(listIDs);
+		Collection<Location> locations = locationRepository.findAllById(locationIDs);
+		
+		if (!HelperService.userOwns(auth, lists)) {
+			throw new AccessDeniedException("User " + auth.getName() + " attempted to modify un-owned list.");
 		}
 		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
+		if (!HelperService.userOwns(auth, locations)) {
+			throw new AccessDeniedException("User " + auth.getName() + " attempted to modify un-owned location.");
+		}
 		
-		/**
-		 * If you are a potential employer reading this, please know that I am someone
-		 *  who prioritizes understandable code over number of lines saved.
-		 *  While there are cases for things like this lambda expression approach,
-		 *  I will always try to write the most readable code possible. Thank you.
-		 * 
-		locations.forEach((locationID) -> {
-			if(userOwnsLocation(auth, locationID)) {
-				list.addToLocations(locationRepository.findByIDOrThrow(locationID));
-			}
-		});
-		 */
-		
-		List<Location> locIterable = new ArrayList<Location>();
-		for (Long locationID: locations) {
-			if (userOwnsLocation(auth, locationID)) {
-				
-				Location location = locationRepository.findByIDOrThrow(locationID);
-				//Add this location to the list
+		for (LocationList list : lists) {
+			for (Location location: locations) {
 				list.addToLocations(location);
-
-				//Make sure this location is tagged as listed
-				if (location.getListed() == 0) {
-					location.setListed((long) 1);
-				}
-				locIterable.add(location);
+				location.setListed((long) 1);
 			}
 		}
 		
-		locationRepository.saveAll(locIterable);
-		locationListRepository.save(list);
+		locationListRepository.saveAll(lists);
+		locationRepository.saveAll(locations);
+		
+		
+//		//Usually will just be one list but can support multiple
+//		for (Long listID: lists) {
+//			
+//			//Check is requesting user owns this list
+//			if (!userOwnsList(auth, listID)) {
+//				throw new AccessDeniedException("User does not own list ID: " + listID);
+//			}
+//			
+//			LocationList list = locationListRepository.findByIDOrThrow(listID);
+//			
+//			List<Location> locIterable = new ArrayList<Location>();
+//			for (Long locationID: locations) {
+//				if (userOwnsLocation(auth, locationID)) {
+//					
+//					//Pull the location from DB
+//					Location location = locationRepository.findByIDOrThrow(locationID);
+//
+//					//Add this location to the list
+//					list.addToLocations(location);
+//	
+//					//Make sure this location is tagged as listed
+//					if (location.getListed() == 0) {
+//						location.setListed((long) 1);
+//					}
+//					locIterable.add(location);
+//				} else {
+//					throw new AccessDeniedException("User does not own this location ID: " + locationID);
+//				}
+//			}
+//			
+//			locationRepository.saveAll(locIterable);
+//			locationListRepository.save(list);
+//		}
 	}
 	
 	
@@ -285,12 +259,13 @@ public class LocationListService {
      */
 	public void removeFromList(Long listID, Collection<Long> locations, Authentication auth) {
 		
+		LocationList list = locationListRepository.findByIDOrThrow(listID);
+
 		//Check is requesting user owns this list
-		if (!userOwnsList(auth, listID)) {
+		if (!HelperService.userOwns(auth, List.of(list))) {
 			throw new AccessDeniedException("User does not own this list.");
 		}
 		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
 		
 		for (Long locationID: locations) {
 			//Should never be the case that the location is not owned by the user
