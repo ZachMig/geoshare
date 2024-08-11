@@ -71,7 +71,7 @@ public class LocationService {
 		return locationRepository.findByIDOrThrow(id);
 	}
 	
-	public void createLocation(LocationDTO locationDTO) {
+	public Location createLocation(LocationDTO locationDTO) {
 		BigDecimal lat, lng;
 		String url = locationDTO.url();
 		String description = locationDTO.description();
@@ -98,7 +98,7 @@ public class LocationService {
 		
 
 		//Maybe check lat and lng to see if this user has saved this loc already?
-		locationRepository.save(location);
+		return locationRepository.save(location);
 		
 	}
 	
