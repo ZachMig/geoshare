@@ -10,7 +10,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.geoshare.backend.dto.ListContainer;
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.dto.LocationListDTO;
 import com.geoshare.backend.entity.GeoshareUser;
@@ -69,7 +68,8 @@ public class LocationListService {
 	public Collection<LocationListDTO> findFormattedLists(String username, Authentication auth) {
 		
 		//TODO
-		//If requested lists are private and not owned by logged in user, do not return them
+		//If requested lists are private and not owned by logged in user, do not return them?
+		//or remove private/public thing it's probably not needed
 		
 		Set<LocationDTO> locs = locationRepository.findUnlistedByUser(username)
 				.stream()
@@ -90,8 +90,6 @@ public class LocationListService {
 				.collect(Collectors.toList());
 		
 		allLists.add(0, unlisted);
-		
-
 		
 		return allLists;
 		
@@ -212,41 +210,6 @@ public class LocationListService {
 		
 		locationListRepository.saveAll(lists);
 		locationRepository.saveAll(locations);
-		
-		
-//		//Usually will just be one list but can support multiple
-//		for (Long listID: lists) {
-//			
-//			//Check is requesting user owns this list
-//			if (!userOwnsList(auth, listID)) {
-//				throw new AccessDeniedException("User does not own list ID: " + listID);
-//			}
-//			
-//			LocationList list = locationListRepository.findByIDOrThrow(listID);
-//			
-//			List<Location> locIterable = new ArrayList<Location>();
-//			for (Long locationID: locations) {
-//				if (userOwnsLocation(auth, locationID)) {
-//					
-//					//Pull the location from DB
-//					Location location = locationRepository.findByIDOrThrow(locationID);
-//
-//					//Add this location to the list
-//					list.addToLocations(location);
-//	
-//					//Make sure this location is tagged as listed
-//					if (location.getListed() == 0) {
-//						location.setListed((long) 1);
-//					}
-//					locIterable.add(location);
-//				} else {
-//					throw new AccessDeniedException("User does not own this location ID: " + locationID);
-//				}
-//			}
-//			
-//			locationRepository.saveAll(locIterable);
-//			locationListRepository.save(list);
-//		}
 	}
 	
 	

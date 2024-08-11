@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.geoshare.backend.dto.ListContainer;
 import com.geoshare.backend.dto.LocationListDTO;
-import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.service.LocationListService;
 

@@ -3,7 +3,6 @@ package com.geoshare.backend.controller;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.entity.Location;
+import com.geoshare.backend.service.LocationListService;
 import com.geoshare.backend.service.LocationService;
 
 import jakarta.validation.Valid;
@@ -28,9 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 public class LocationController {
 	
 	private LocationService locationService;
+	private LocationListService locationListService;
 	
-	public LocationController(LocationService locationService) {
+	public LocationController(LocationService locationService, LocationListService locationListService) {
 		this.locationService = locationService;
+		this.locationListService = locationListService;
 	}
 	
 	@GetMapping("/findall")
@@ -77,9 +79,12 @@ public class LocationController {
 	public ResponseEntity<String> createLocation(
 			@Valid
 			@RequestBody
-			LocationDTO locationDTO) {
+			LocationDTO locationDTO,
+			Authentication auth) {
 		
-		locationService.createLocation(locationDTO);
+		Location createdLocation = locationService.createLocation(locationDTO);
+		locationListService.addLocationsToLists(locationDTO.listIDs(), List.of(createdLocation.getId()), auth);
+		
 		return new ResponseEntity<>("Create request ran with no errors.", HttpStatus.OK);
 		
 	}

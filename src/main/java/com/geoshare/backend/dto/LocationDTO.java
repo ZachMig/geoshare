@@ -1,5 +1,8 @@
 package com.geoshare.backend.dto;
 
+import java.util.Collection;
+
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +31,11 @@ public record LocationDTO (
 	
 	@Max(value = Long.MAX_VALUE)
 	@NotNull
-	Long userID
+	Long userID,
+	
+	@Nullable
+	@Size(max = 65535)
+	Collection<Long> listIDs
 	)
 	{}
 	

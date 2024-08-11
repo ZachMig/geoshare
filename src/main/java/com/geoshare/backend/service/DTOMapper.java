@@ -19,7 +19,8 @@ public class DTOMapper {
 				location.getDescription(),
 				location.getCountry().getName(),
 				location.getMeta().getName(),
-				location.getUser().getId()
+				location.getUser().getId(),
+				location.getLists().stream().map(list -> list.getId()).toList()
 		);
 		
 	}
