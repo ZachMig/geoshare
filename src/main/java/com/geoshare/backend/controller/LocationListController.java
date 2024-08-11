@@ -51,11 +51,13 @@ public class LocationListController {
 	}
 	
 	@GetMapping("/findformatted")
-	public ListContainer getFormattedLists(
+	public ResponseEntity<?> getFormattedLists(
 			@RequestParam(value = "uname", required = true) String username,
 			Authentication auth) {
 		
-		return locationListService.getFormattedLists(username, auth);
+		Collection<LocationListDTO> allLists = locationListService.findFormattedLists(username, auth);
+		
+		return new ResponseEntity<>(allLists, HttpStatus.OK);
 	}
 	
 	@GetMapping("/find")

@@ -66,7 +66,7 @@ public class LocationListService {
 		return locationListRepository.findByIDOrThrow(listID);
 	}
 	
-	public ListContainer getFormattedLists(String username, Authentication auth) {
+	public Collection<LocationListDTO> findFormattedLists(String username, Authentication auth) {
 		
 		//TODO
 		//If requested lists are private and not owned by logged in user, do not return them
@@ -83,14 +83,17 @@ public class LocationListService {
 				true,
 				locs);
 				
-				
-		
-		List<LocationListDTO> listed = locationListRepository.findListsWithLocationsByUser(username)
+		List<LocationListDTO> allLists = locationListRepository.findListsWithLocationsByUser(username)
 				.stream()
 				.map(DTOMapper::mapListDTO)
+				.sorted((a, b) -> a.name().compareTo(b.name()))
 				.collect(Collectors.toList());
 		
-		return new ListContainer(unlisted, listed);
+		allLists.add(0, unlisted);
+		
+
+		
+		return allLists;
 		
 		
 	}
