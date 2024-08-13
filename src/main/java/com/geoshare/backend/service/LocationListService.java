@@ -71,11 +71,13 @@ public class LocationListService {
 		//If requested lists are private and not owned by logged in user, do not return them?
 		//or remove private/public thing it's probably not needed
 		
+		//Pull all the user locations that belong to no lists
 		Set<LocationDTO> locs = locationRepository.findUnlistedByUser(username)
 				.stream()
 				.map(DTOMapper::mapLocationDTO)
 				.collect(Collectors.toSet());
-
+		
+		//Collect the unlisted locations into a "list" of unlisted
 		LocationListDTO unlisted = new LocationListDTO(
 				(long) -1,
 				"Unlisted",
@@ -83,13 +85,20 @@ public class LocationListService {
 				true,
 				locs);
 				
+		
+		locationListRepository.findListsWithLocationsByUser(username).forEach(list -> System.out.println(list.getName()));
+		
+		//Pull all the user lists with attached locations
 		List<LocationListDTO> allLists = locationListRepository.findListsWithLocationsByUser(username)
 				.stream()
 				.map(DTOMapper::mapListDTO)
 				.sorted((a, b) -> a.name().compareTo(b.name()))
 				.collect(Collectors.toList());
 		
+		//Prefix the list of lists with the "unlisted list"
 		allLists.add(0, unlisted);
+		
+		allLists.forEach(list -> System.out.println(list.name()));
 		
 		return allLists;
 		
