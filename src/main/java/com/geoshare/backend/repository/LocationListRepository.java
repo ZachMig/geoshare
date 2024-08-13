@@ -44,9 +44,10 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 			new EntityNotFoundException("List not found in the database."));
 	}
 	
-	@Query("SELECT L FROM LocationList L JOIN FETCH L.locations "
-			+ "JOIN GeoshareUser U on L.user.username = :username")
+	@Query("SELECT L FROM LocationList L LEFT JOIN FETCH L.locations "
+			+ "WHERE L.user.username = :username")
 	List<LocationList> findListsWithLocationsByUser(String username);
+	
 	
 	@Query("SELECT L FROM LocationList L WHERE L.id in :ids")
 	List<LocationList> findAllById(Collection<Long> ids);

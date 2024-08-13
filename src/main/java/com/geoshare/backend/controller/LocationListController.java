@@ -53,7 +53,7 @@ public class LocationListController {
 			@RequestParam(value = "uname", required = true) String username,
 			Authentication auth) {
 		
-		Collection<LocationListDTO> allLists = locationListService.findFormattedLists(username, auth);
+		Collection<LocationListDTO> allLists = locationListService.findFormattedLists(username.toLowerCase().trim(), auth);
 		
 		return new ResponseEntity<>(allLists, HttpStatus.OK);
 	}
