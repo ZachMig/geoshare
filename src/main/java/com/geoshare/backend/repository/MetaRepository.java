@@ -14,21 +14,25 @@ import jakarta.persistence.EntityNotFoundException;
 @Repository
 public interface MetaRepository extends CrudRepository<Meta, Long> {
 	
-	@Query("SELECT M FROM Meta M WHERE M.id = :id")
-	Optional<Meta> findByID(Long id);
+/**Removed all this fun JPQL stuff and replaced it with service layer
+ * 	functionality which resulted in fewer lines of code, and much, much better performance.
+ */
 	
-	default Meta findByIDOrThrow(Long id) {
-		return findByID(id).orElseThrow(() ->
-			new EntityNotFoundException("Meta not found in database"));
-	}
-	
-	@Query("SELECT M FROM Meta M WHERE M.name = :name")
-	Optional<Meta> findByName(String name);
-	
-	default Meta findByNameOrThrow(String name) {
-		return findByName(name).orElseThrow(() -> 
-			new EntityNotFoundException("Meta not found in database"));
-	}
+//	@Query("SELECT M FROM Meta M WHERE M.id = :id")
+//	Optional<Meta> findByID(Long id);
+//	
+//	default Meta findByIDOrThrow(Long id) {
+//		return findByID(id).orElseThrow(() ->
+//			new EntityNotFoundException("Meta not found in database"));
+//	}
+//	
+//	@Query("SELECT M FROM Meta M WHERE M.name = :name")
+//	Optional<Meta> findByName(String name);
+//	
+//	default Meta findByNameOrThrow(String name) {
+//		return findByName(name).orElseThrow(() -> 
+//			new EntityNotFoundException("Meta not found in database"));
+//	}
 	
 	List<Meta> findAll();
 	

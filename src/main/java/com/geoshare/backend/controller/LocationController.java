@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,6 +99,15 @@ public class LocationController {
 		return new ResponseEntity<>("Delete request ran with no errors.", HttpStatus.OK);
 	
 		
+	}
+	
+	@PutMapping("/update")
+	public ResponseEntity<String> updateLocation(
+			@Valid @RequestBody(required = true) LocationDTO locationDTO,
+			Authentication auth) {
+		
+		locationService.updateLocation(locationDTO, auth);
+		return new ResponseEntity<>("Update request ran with no errors.", HttpStatus.OK);
 	}
 	
 }

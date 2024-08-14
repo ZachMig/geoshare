@@ -15,15 +15,12 @@ import com.geoshare.backend.service.MetaService;
 @RequestMapping("/api/metas")
 public class MetaController {
 
-	@Autowired
 	private MetaService metaService;
 	
-	@GetMapping("/find")
-	public Meta getMeta(
-			@RequestParam(value="metaid", required = true) Long metaID) {
-		return metaService.findByID(metaID);
+	public MetaController(MetaService metaService) {
+		this.metaService = metaService;
 	}
-	
+
 	@GetMapping("/findall")
 	public List<Meta> getAllMetas() {
 		return metaService.findAll();

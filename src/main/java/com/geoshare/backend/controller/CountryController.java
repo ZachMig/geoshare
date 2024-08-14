@@ -21,12 +21,6 @@ public class CountryController {
 		this.countryService = countryService;
 	}
 	
-	@GetMapping("/find")
-	public Country getCountry(
-			@RequestParam(value = "countryID", required = true)Long countryID) {
-		return countryService.findByID(countryID);
-	}
-	
 	@GetMapping("/findall")
 	public List<Country> getAllCountries() {
 		return countryService.findAll();

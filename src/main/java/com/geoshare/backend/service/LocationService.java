@@ -28,27 +28,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class LocationService {
 	
+	private CountryService countryService;
+	private MetaService metaService;
 	private LocationRepository locationRepository;
-	private CountryRepository countryRepository;
 	private GeoshareUserRepository userRepository;
 	private LocationListRepository locationListRepository;
 	private LocationCommentRepository locationCommentRepository;
-	private MetaRepository metaRepository;
+
 	
 	public LocationService(
+			CountryService countryService,
+			MetaService metaService,
 			LocationRepository locationRepository, 
-			CountryRepository countryRepository,
 			GeoshareUserRepository userRepository,
 			LocationListRepository locationListRepository,
-			LocationCommentRepository locationCommentRepository,
-			MetaRepository metaRepository) {
+			LocationCommentRepository locationCommentRepository) {
 		
+		this.countryService = countryService;
+		this.metaService = metaService;
 		this.locationRepository = locationRepository;
-		this.countryRepository = countryRepository;
 		this.userRepository = userRepository;
 		this.locationListRepository = locationListRepository;
 		this.locationCommentRepository = locationCommentRepository;
-		this.metaRepository = metaRepository;
 	}
 
 	public List<Location> findAllByUser(Long userID) {
@@ -75,17 +76,15 @@ public class LocationService {
 		BigDecimal lat, lng;
 		String url = locationDTO.url();
 		String description = locationDTO.description();
-		String countryName = locationDTO.countryName();
 		Long userID = locationDTO.userID();
-		String metaName = locationDTO.meta();
 		
 		BigDecimal[] coords = parseLatAndLong(url);
 		lat = coords[0];
 		lng = coords[1];
 		
-		Country country = countryRepository.findByNameOrThrow(countryName);
+		Country country = countryService.findCountry(locationDTO.countryName());
+		Meta meta = metaService.findMeta(locationDTO.meta());
 		GeoshareUser geoshareUser = userRepository.findByIDOrThrow(userID);
-		Meta meta = metaRepository.findByNameOrThrow(metaName);
 		
 		Location location = new Location(
 				url,
@@ -156,6 +155,27 @@ public class LocationService {
 			//Finally delete the Location
 			locationRepository.delete(location);
 		}
+	}
+	
+	
+	public LocationDTO updateLocation(LocationDTO locationDTO, Authentication auth) {
+		
+		Location location = locationRepository.findByIDOrThrow(locationDTO.id());
+		
+		if (!HelperService.userOwns(auth, List.of(location))) {
+			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
+		}
+		
+		Country newCountry = countryService.findCountry(locationDTO.countryName());
+		Meta newMeta = metaService.findMeta(locationDTO.meta());
+		
+		location.setUrl(locationDTO.url());
+		location.setCountry(newCountry);
+		location.setMeta(newMeta);
+		location.setDescription(locationDTO.description());
+		
+		return DTOMapper.mapLocationDTO(locationRepository.save(location));
+		
 	}
 	
 	

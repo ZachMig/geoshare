@@ -24,7 +24,7 @@ public class Meta {
 	@Column(name="name")
 	private String name;
 	
-	public Long getId() {
+	public Long getID() {
 		return id;
 	}
 
