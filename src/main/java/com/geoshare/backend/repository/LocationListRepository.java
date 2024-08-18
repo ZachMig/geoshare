@@ -51,5 +51,8 @@ public interface LocationListRepository extends CrudRepository<LocationList, Lon
 	
 	@Query("SELECT L FROM LocationList L WHERE L.id in :ids")
 	List<LocationList> findAllById(Collection<Long> ids);
+
+	
+	List<LocationList> findByNameContains(String listNameParam);
 	
 }

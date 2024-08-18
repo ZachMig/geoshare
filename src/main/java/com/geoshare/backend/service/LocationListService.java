@@ -65,7 +65,7 @@ public class LocationListService {
 		return locationListRepository.findByIDOrThrow(listID);
 	}
 	
-	public Collection<LocationListDTO> findFormattedLists(String username, Authentication auth) {
+	public Collection<LocationListDTO> findFormattedLists(String username) {
 		
 		//TODO
 		//If requested lists are private and not owned by logged in user, do not return them?
@@ -85,23 +85,35 @@ public class LocationListService {
 				true,
 				locs);
 				
-		
-		locationListRepository.findListsWithLocationsByUser(username).forEach(list -> System.out.println(list.getName()));
-		
+				
 		//Pull all the user lists with attached locations
-		List<LocationListDTO> allLists = locationListRepository.findListsWithLocationsByUser(username)
+		List<LocationListDTO> userLists = locationListRepository.findListsWithLocationsByUser(username)
 				.stream()
 				.map(DTOMapper::mapListDTO)
 				.sorted((a, b) -> a.name().compareTo(b.name()))
 				.collect(Collectors.toList());
 		
 		//Prefix the list of lists with the "unlisted list"
-		allLists.add(0, unlisted);
+		userLists.add(0, unlisted);
+				
+		return userLists;
+	}
+	
+	
+	public Collection<LocationListDTO> findAllByListNameSearchParam(String listNameSearchParam) {
+		Collection<LocationList> foundLists = locationListRepository.findByNameContains(listNameSearchParam);
 		
-		allLists.forEach(list -> System.out.println(list.name()));
+		System.out.println("Found " + foundLists.size() + " lists for input " + listNameSearchParam);
+		foundLists.forEach(l -> System.out.println(l.getName()));
 		
-		return allLists;
+		Collection<LocationListDTO> foundListsDTO = foundLists
+				.stream()
+				.map(DTOMapper::mapListDTO)
+				.sorted((a, b) -> a.name().compareTo(b.name()))
+				.toList();
 		
+		
+		return foundListsDTO;
 		
 	}
 	
