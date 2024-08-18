@@ -61,6 +61,8 @@ public class SecurityConfig {
                             		.requestMatchers("/api/countries/findall").permitAll()
                             		.requestMatchers("/api/metas/findall").permitAll()
                             		.requestMatchers("/api/users/findall").permitAll()
+                            		.requestMatchers("api/lists/findformatted").permitAll()
+                            		.requestMatchers("api/lists/searchlists").permitAll()
                             		.anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

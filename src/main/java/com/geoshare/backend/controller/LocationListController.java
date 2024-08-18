@@ -50,12 +50,20 @@ public class LocationListController {
 	
 	@GetMapping("/findformatted")
 	public ResponseEntity<?> getFormattedLists(
-			@RequestParam(value = "uname", required = true) String username,
-			Authentication auth) {
+			@RequestParam(value = "uname", required = true) String username) {
 		
-		Collection<LocationListDTO> allLists = locationListService.findFormattedLists(username.toLowerCase().trim(), auth);
+		Collection<LocationListDTO> userLists = locationListService.findFormattedLists(username.toLowerCase().trim());
 		
-		return new ResponseEntity<>(allLists, HttpStatus.OK);
+		return new ResponseEntity<>(userLists, HttpStatus.OK);
+	}
+	
+	@GetMapping("/searchlists")
+	public ResponseEntity<Collection<LocationListDTO>> searchLists(
+			@RequestParam(value = "includes", required = true) String listNameSearchParam) {
+		
+		Collection<LocationListDTO> matchedSearchedLists = locationListService.findAllByListNameSearchParam(listNameSearchParam);
+		return new ResponseEntity<>(matchedSearchedLists, HttpStatus.OK);
+		
 	}
 	
 	@GetMapping("/find")
