@@ -104,11 +104,10 @@ public class LocationListController {
 	
 	@PutMapping("/update")
 	public ResponseEntity<?> updateList(
-			@RequestParam(value = "listid", required = true) Long listID,
 			@Valid @RequestBody LocationListDTO listDTO,
 			Authentication auth) {
 		
-		locationListService.updateList(listID, listDTO, auth);
+		locationListService.updateList(listDTO, auth);
 		return new ResponseEntity<>("List update request handled successfully.", HttpStatus.OK);
 	}
 	

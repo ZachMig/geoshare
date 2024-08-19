@@ -182,9 +182,9 @@ public class LocationListService {
      * @throws AccessDeniedException if the logged in user does not own the specified LocationList.
      * @throws EntityNotFoundException if the LocationList with listID was not found in the database.
      */
-	public void updateList(Long listID, LocationListDTO listDTO, Authentication auth) {
+	public void updateList(LocationListDTO listDTO, Authentication auth) {
 
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
+		LocationList list = locationListRepository.findByIDOrThrow(listDTO.id());
 		
 		//Check is requesting user owns this list
 		if (!HelperService.userOwns(auth, List.of(list))) {
