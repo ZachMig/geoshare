@@ -30,7 +30,7 @@ public interface LocationRepository extends CrudRepository<Location, Long> {
 	
 	default Location findByIDOrThrow(Long id) {
 		return findById(id).orElseThrow( () ->
-			new EntityNotFoundException("Location not found in database."));
+			new EntityNotFoundException("Location indicated by id: " + id + " was not found in database."));
 	}
 	
 	@Query("SELECT L FROM Location L JOIN GeoshareUser U ON L.user.id = U.id "

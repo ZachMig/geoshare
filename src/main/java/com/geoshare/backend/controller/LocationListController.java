@@ -102,6 +102,18 @@ public class LocationListController {
 		return new ResponseEntity<>("List delete request handled successfully.", HttpStatus.OK);
 	}
 	
+	@PutMapping("/unlink")
+	public ResponseEntity<?> unlinkFromList(
+			@RequestParam(value = "listid", required = true) Long listID,
+			@RequestBody(required = true) Collection<Long> locationIDs,
+			Authentication auth) {
+		
+		locationListService.unlinkFromList(listID, locationIDs, auth);
+		
+		return new ResponseEntity<>("Unlink request handled successfully.", HttpStatus.OK);
+		
+	}
+	
 	@PutMapping("/update")
 	public ResponseEntity<?> updateList(
 			@Valid @RequestBody LocationListDTO listDTO,
@@ -113,7 +125,7 @@ public class LocationListController {
 	
 	@PutMapping("/add")
 	public ResponseEntity<?> addLocationsToLists(
-			@Valid @RequestBody 
+			@Valid @RequestBody(required = true)
 			Collection<Long> lists,
 			Collection<Long> locations,
 			Authentication auth) {
