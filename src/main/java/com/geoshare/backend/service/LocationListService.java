@@ -157,6 +157,12 @@ public class LocationListService {
 			throw new AccessDeniedException("User does not own this list.");
 		}
 		
+		//If the list we are deleting is the last list each of it's locations belonged to, set the location to unlisted
+		Collection<Location> locations = list.getLocations();
+		locations.stream()
+			.filter(location -> location.getLists().size() == 1)
+			.forEach(location -> location.setListed((long) 0));
+		
 		//Remove all locations from this list, not sure if this step is actually required depending on how JPA works under the hood
 		list.setLocations(new HashSet<Location>());
 		
@@ -172,6 +178,44 @@ public class LocationListService {
 		locationListRepository.deleteById(listID);
 	
 	}
+	
+	public void unlinkFromList(Long listID, Collection<Long> locationIDs, Authentication auth) {
+		
+		LocationList list = locationListRepository.findByIDOrThrow(listID);
+		
+		if(!HelperService.userOwns(auth, List.of(list))) {
+			throw new AccessDeniedException("User attempted to unlink from un-owned list: " + listID);
+		}
+		
+		Collection<Location> locations = locationRepository.findAllById(locationIDs);
+		
+		if (!HelperService.userOwns(auth, locations)) {
+			throw new AccessDeniedException("User attempted to unlink one or more un-owned locations: " + locationIDs);
+		}
+		
+		//Now we know the list and all locations are owned by current user.
+		
+		//Remove each location from this list and don't forget to check and set unlisted if needed
+		locations.forEach(location -> {
+			//Remove this location
+			list.removeFromLocations(location);
+			//Now check if that was the last list for this location, and mark unlisted if so
+			if (location.getLists().size() == 1) {
+				location.setListed((long)0);				
+			}
+		});
+		
+		//Don't forget to save your changes
+		locationListRepository.save(list);
+		
+		//This would not be necessary since LocationList owns the many to many relationship, so 
+		//	the above save will handle the unlinking. This save is for marking the locations unlisted.
+		locationRepository.saveAll(locations);
+		
+
+		
+	}
+	
 	
 	/**
      * Updates a LocationList identified by listID with data from listDTO.
@@ -238,13 +282,11 @@ public class LocationListService {
      * Removes locations from a LocationList identified by listID.
      *
      * @param listID    The ID of the LocationList to remove Locations from.
-     * @param locations The collection of Location IDs to remove from the LocationList.
+     * @param locationIDs The collection of Location IDs to remove from the LocationList.
      * @param auth      The authentication object representing the current user.
      * @throws AccessDeniedException if the logged in user does not own this LocationList.
-     * @throws EntityNotFoundException if the LocationList identified by listID was not found in the database,
-     * 			or if one of the Locations identified by locations was not found in the database.
      */
-	public void removeFromList(Long listID, Collection<Long> locations, Authentication auth) {
+	public void removeFromList(Long listID, Collection<Long> locationIDs, Authentication auth) {
 		
 		LocationList list = locationListRepository.findByIDOrThrow(listID);
 
@@ -253,13 +295,10 @@ public class LocationListService {
 			throw new AccessDeniedException("User does not own this list.");
 		}
 		
-		
-		for (Long locationID: locations) {
+		for (Long locationID: locationIDs) {
 			//Should never be the case that the location is not owned by the user
-			Location location = locationRepository.findById(locationID).get();
-			if (location == null) {
-				throw new EntityNotFoundException("Location indicated by id: " + locationID + " was not found in database.");
-			}
+			Location location = locationRepository.findByIDOrThrow(locationID);
+
 			list.removeFromLocations(location);
 		}
 		

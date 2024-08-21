@@ -70,6 +70,9 @@ public class Location implements Ownable {
 	@Column(name="listed")
 	private Long listed;
 	
+	//TODO
+	//Add numberOfLists field so we can easily determine if a location needs to be marked unlisted
+	
 	@ManyToOne
 	@JoinColumn(name="meta_id")
 	private Meta meta;
