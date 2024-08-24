@@ -253,12 +253,12 @@ public class LocationListService {
      * @throws EntityNotFoundException if the Location List with listID was not found in the database,
      *                                 or if any of the Locations were not found in the database.
      */
-	public void addLocationsToLists(Collection<Long> listIDs, Collection<Long> locationIDs, Authentication auth) {
+	public void addLocationsToList(Long listID, Collection<Long> locationIDs, Authentication auth) {
 		
-		Collection<LocationList> lists = locationListRepository.findAllById(listIDs);
+		LocationList list = locationListRepository.findByIDOrThrow(listID);
 		Collection<Location> locations = locationRepository.findAllById(locationIDs);
 		
-		if (!HelperService.userOwns(auth, lists)) {
+		if (!HelperService.userOwns(auth, List.of(list))) {
 			throw new AccessDeniedException("User " + auth.getName() + " attempted to modify un-owned list.");
 		}
 		
@@ -266,44 +266,15 @@ public class LocationListService {
 			throw new AccessDeniedException("User " + auth.getName() + " attempted to modify un-owned location.");
 		}
 		
-		for (LocationList list : lists) {
-			for (Location location: locations) {
-				list.addToLocations(location);
-				location.setListed((long) 1);
-			}
-		}
-		
-		locationListRepository.saveAll(lists);
-		locationRepository.saveAll(locations);
-	}
-	
-	
-    /**
-     * Removes locations from a LocationList identified by listID.
-     *
-     * @param listID    The ID of the LocationList to remove Locations from.
-     * @param locationIDs The collection of Location IDs to remove from the LocationList.
-     * @param auth      The authentication object representing the current user.
-     * @throws AccessDeniedException if the logged in user does not own this LocationList.
-     */
-	public void removeFromList(Long listID, Collection<Long> locationIDs, Authentication auth) {
-		
-		LocationList list = locationListRepository.findByIDOrThrow(listID);
 
-		//Check is requesting user owns this list
-		if (!HelperService.userOwns(auth, List.of(list))) {
-			throw new AccessDeniedException("User does not own this list.");
+		for (Location location: locations) {
+			list.addToLocations(location);
+			location.setListed((long) 1);
 		}
-		
-		for (Long locationID: locationIDs) {
-			//Should never be the case that the location is not owned by the user
-			Location location = locationRepository.findByIDOrThrow(locationID);
 
-			list.removeFromLocations(location);
-		}
 		
 		locationListRepository.save(list);
-		
+		locationRepository.saveAll(locations);
 	}
 	
 }

@@ -84,7 +84,10 @@ public class LocationController {
 			Authentication auth) {
 		
 		Location createdLocation = locationService.createLocation(locationDTO);
-		locationListService.addLocationsToLists(locationDTO.listIDs(), List.of(createdLocation.getId()), auth);
+		
+		for (Long listID : locationDTO.listIDs()) {
+			locationListService.addLocationsToList(listID, List.of(createdLocation.getId()), auth);			
+		}
 		
 		return new ResponseEntity<>("Create request ran with no errors.", HttpStatus.OK);
 		
