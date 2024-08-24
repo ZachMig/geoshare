@@ -124,26 +124,14 @@ public class LocationListController {
 	}
 	
 	@PutMapping("/add")
-	public ResponseEntity<?> addLocationsToLists(
-			@Valid @RequestBody(required = true)
-			Collection<Long> lists,
-			Collection<Long> locations,
+	public ResponseEntity<?> addLocationsToList(
+			@RequestParam(value = "listid", required = true) Long listID,
+			@Valid @RequestBody(required = true) Collection<Long> locations,
 			Authentication auth) {
 
-		locationListService.addLocationsToLists(lists, locations, auth);
+		locationListService.addLocationsToList(listID, locations, auth);
 		return new ResponseEntity<>("List add request handled successfully.", HttpStatus.OK);
-	}
-	
-	@PutMapping("/remove")
-	public ResponseEntity<?> removeFromList(
-			@RequestParam(value = "listid", required = true) Long listID,
-			@Valid @RequestBody Collection<Long> locations,
-			Authentication auth) {
-		
-		locationListService.removeFromList(listID, locations, auth);
-		return new ResponseEntity<>("List remove request handled successfully.", HttpStatus.OK);
-	}
-	
+	}	
 }
 
 
