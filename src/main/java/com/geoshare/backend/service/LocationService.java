@@ -15,12 +15,10 @@ import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.entity.LocationComment;
 import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.entity.Meta;
-import com.geoshare.backend.repository.CountryRepository;
 import com.geoshare.backend.repository.GeoshareUserRepository;
 import com.geoshare.backend.repository.LocationCommentRepository;
 import com.geoshare.backend.repository.LocationListRepository;
 import com.geoshare.backend.repository.LocationRepository;
-import com.geoshare.backend.repository.MetaRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -177,6 +175,5 @@ public class LocationService {
 		return DTOMapper.mapLocationDTO(locationRepository.save(location));
 		
 	}
-	
 	
 }

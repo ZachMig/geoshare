@@ -2,6 +2,8 @@ package com.geoshare.backend.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +12,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserCache;
+import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -35,10 +39,12 @@ public class SecurityConfig {
     private final JPAUserDetailsService jpaUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private RSAKey rsaKey;
+    private UserCache userCache;
     
-    public SecurityConfig(JPAUserDetailsService jpaUserDetailsService, PasswordEncoder passwordEncoder) {
+    public SecurityConfig(JPAUserDetailsService jpaUserDetailsService, PasswordEncoder passwordEncoder, UserCache userCache) {
     	this.jpaUserDetailsService = jpaUserDetailsService;
     	this.passwordEncoder = passwordEncoder;
+    	this.userCache = userCache;
     }
     
     @Bean
@@ -46,7 +52,13 @@ public class SecurityConfig {
     	var authProvider = new DaoAuthenticationProvider();
     	authProvider.setUserDetailsService(jpaUserDetailsService);
     	authProvider.setPasswordEncoder(passwordEncoder);
-    	return new ProviderManager(authProvider);
+    	
+    	//Setup user caching to avoid DB lookups on every authenticated API call
+    	authProvider.setUserCache(userCache);
+    	ProviderManager manager = new ProviderManager(authProvider);
+    	manager.setEraseCredentialsAfterAuthentication(false);
+    	
+    	return manager;
     }
     
     @Bean

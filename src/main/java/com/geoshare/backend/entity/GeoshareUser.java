@@ -8,9 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name="user")
+@Data
 public class GeoshareUser {
 	
 	public GeoshareUser() {}
@@ -20,7 +22,6 @@ public class GeoshareUser {
 		this.password = password;
 		this.roles = "ROLE_USER";
 	}
-	
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
@@ -36,38 +37,9 @@ public class GeoshareUser {
 	@JsonIgnore
 	@Column(name="roles")
 	private String roles;
-	
-	
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@JsonIgnore
+	@Column(name="email")
+	private String email;
 	
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public String getRoles() {
-		return this.roles;
-	}
-	
-	public void setRoles(String roles) {
-		this.roles = roles;
-	}
-
 }
