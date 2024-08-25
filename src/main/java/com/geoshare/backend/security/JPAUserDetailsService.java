@@ -1,5 +1,6 @@
 package com.geoshare.backend.security;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +19,7 @@ public class JPAUserDetailsService implements UserDetailsService {
 	}
 	
 	@Override
+	@Cacheable(cacheNames = "userCache")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		GeoshareUser geoUser = userRepository.findByUsernameOrThrow(username);
 		

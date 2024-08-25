@@ -211,9 +211,6 @@ public class LocationListService {
 		//This would not be necessary since LocationList owns the many to many relationship, so 
 		//	the above save will handle the unlinking. This save is for marking the locations unlisted.
 		locationRepository.saveAll(locations);
-		
-
-		
 	}
 	
 	
@@ -242,7 +239,6 @@ public class LocationListService {
 		locationListRepository.save(list);
 	}
 	
-	
     /**
      * Adds Locations to a LocationList identified by listID.
      *
@@ -265,13 +261,11 @@ public class LocationListService {
 		if (!HelperService.userOwns(auth, locations)) {
 			throw new AccessDeniedException("User " + auth.getName() + " attempted to modify un-owned location.");
 		}
-		
 
 		for (Location location: locations) {
 			list.addToLocations(location);
 			location.setListed((long) 1);
 		}
-
 		
 		locationListRepository.save(list);
 		locationRepository.saveAll(locations);

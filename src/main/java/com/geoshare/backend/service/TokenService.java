@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.geoshare.backend.dto.LoginRequestDTO;
 import com.geoshare.backend.dto.LoginResponseDTO;
+import com.geoshare.backend.entity.GeoshareUser;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,8 +65,8 @@ public class TokenService {
 						loginRequest.username(), 
 						loginRequest.password()));
 		String token = generateToken(authentication);
-		Long userID = userService.findUserIdByUsername(loginRequest.username());
-		return new LoginResponseDTO(token, userID);
+		GeoshareUser user = userService.findUserByUsernameOrThrow(loginRequest.username());
+		return new LoginResponseDTO(token, user.getId(), user.getEmail());
 	}
 
 }
