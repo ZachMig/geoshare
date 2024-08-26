@@ -1,6 +1,5 @@
 package com.geoshare.backend.service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,6 @@ public class DTOMapper {
 				locationList.getId(),
 				locationList.getName(),
 				locationList.getDescription(),
-				locationList.isPublic(),
 				locs
 		);
 	}

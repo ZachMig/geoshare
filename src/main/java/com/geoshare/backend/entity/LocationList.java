@@ -16,7 +16,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,11 +29,9 @@ import lombok.Setter;
 @Table(name="list")
 public class LocationList implements Ownable {
 	
-	public LocationList(String name, String description, boolean isPublic, Long likeCount, GeoshareUser user) {
+	public LocationList(String name, String description, GeoshareUser user) {
 		this.name = name;
 		this.description = description;
-		this.isPublic = isPublic;
-		this.likeCount = likeCount;
 		this.user = user;
 		this.locations = new HashSet<>();
 	}
@@ -48,12 +45,6 @@ public class LocationList implements Ownable {
 	
 	@Column(name="description")
 	private String description;
-	
-	@Column(name="public")
-	private boolean isPublic;
-	
-	@Column(name="like_count")
-	private Long likeCount;
 	
 	@ManyToOne
 	@JoinColumn(name="user_id")

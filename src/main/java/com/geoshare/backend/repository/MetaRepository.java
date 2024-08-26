@@ -14,7 +14,8 @@ import jakarta.persistence.EntityNotFoundException;
 @Repository
 public interface MetaRepository extends CrudRepository<Meta, Long> {
 	
-/**Removed all this fun JPQL stuff and replaced it with service layer
+/**
+ * Removed all this fun JPQL stuff and replaced it with service layer
  * 	functionality which resulted in fewer lines of code, and much, much better performance.
  */
 	
