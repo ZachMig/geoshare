@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.dto.LocationListDTO;
 import com.geoshare.backend.entity.GeoshareUser;
-import com.geoshare.backend.entity.ListComment;
 import com.geoshare.backend.entity.Location;
 import com.geoshare.backend.entity.LocationList;
 import com.geoshare.backend.repository.GeoshareUserRepository;
-import com.geoshare.backend.repository.ListCommentRepository;
 import com.geoshare.backend.repository.LocationListRepository;
 import com.geoshare.backend.repository.LocationRepository;
 
@@ -35,18 +33,15 @@ public class LocationListService {
 	private LocationListRepository locationListRepository;
 	private GeoshareUserRepository userRepository;
 	private LocationRepository locationRepository;
-	private ListCommentRepository listCommentRepository;
 	
 	public LocationListService(
 			LocationListRepository locationListRepository,
 			GeoshareUserRepository userRepository,
-			LocationRepository locationRepository,
-			ListCommentRepository listCommentRepository) {
+			LocationRepository locationRepository) {
 		
 		this.locationListRepository = locationListRepository;
 		this.userRepository = userRepository;
 		this.locationRepository = locationRepository;
-		this.listCommentRepository = listCommentRepository;
 	}
 
 	public List<LocationList> findAllByUser(Long userID) {
@@ -67,10 +62,6 @@ public class LocationListService {
 	
 	public Collection<LocationListDTO> findFormattedLists(String username) {
 		
-		//TODO
-		//If requested lists are private and not owned by logged in user, do not return them?
-		//or remove private/public thing it's probably not needed
-		
 		//Pull all the user locations that belong to no lists
 		Set<LocationDTO> locs = locationRepository.findUnlistedByUser(username)
 				.stream()
@@ -82,7 +73,6 @@ public class LocationListService {
 				(long) -1,
 				"Unlisted",
 				"Unlisted",
-				true,
 				locs);
 				
 				
@@ -132,8 +122,6 @@ public class LocationListService {
 		LocationList locationList = new LocationList(
 				listDTO.name(),
 				listDTO.description(),
-				listDTO.isPublic(),
-				Long.valueOf(0),
 				listOwner);
 		
 		locationListRepository.save(locationList);
@@ -166,14 +154,6 @@ public class LocationListService {
 		//Remove all locations from this list, not sure if this step is actually required depending on how JPA works under the hood
 		list.setLocations(new HashSet<Location>());
 		
-		//Delete all comments associated with this LocationList
-		Collection<ListComment> listComments = listCommentRepository.findAllByList(listID);
-		for (ListComment comment : listComments) {
-			comment.setParentComment(null); //Remove all dependencies between these comments
-		}
-		listCommentRepository.saveAll(listComments); //Update with removed dependencies
-		listCommentRepository.deleteAll(listComments); //Delete all associated comments
-		 
 		//Delete the actual list
 		locationListRepository.deleteById(listID);
 	
@@ -234,7 +214,6 @@ public class LocationListService {
 		
 		list.setName(listDTO.name());
 		list.setDescription(listDTO.description());
-		list.setPublic(listDTO.isPublic());
 		
 		locationListRepository.save(list);
 	}

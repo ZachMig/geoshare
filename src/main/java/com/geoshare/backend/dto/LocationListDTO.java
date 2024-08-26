@@ -18,7 +18,5 @@ public record LocationListDTO(
 		@NotBlank
 		String description,
 		
-		boolean isPublic,
-		
 		Set<LocationDTO> locations)
 {}

@@ -38,9 +38,3 @@ public record LocationDTO (
 	Collection<Long> listIDs
 	)
 	{}
-	
-	
-//	@Size(max = 32)
-//	@NotBlank
-//	private String country;
-

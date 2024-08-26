@@ -1,6 +1,5 @@
 package com.geoshare.backend.entity;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +26,9 @@ import lombok.Setter;
 @Table(name="location")
 public class Location implements Ownable {
 	
-	public Location(String url, BigDecimal lat, BigDecimal lng, String description, Country country,
+	public Location(String url, String description, Country country,
 			GeoshareUser user, Meta meta) {
 		this.url = url;
-		this.lat = lat;
-		this.lng = lng;
 		this.description = description;
 		this.country = country;
 		this.user = user;
@@ -46,12 +43,6 @@ public class Location implements Ownable {
 	
 	@Column(name="url", length=255)
 	private String url;
-	
-    @Column(name="lat", precision = 9, scale = 7)
-    private BigDecimal lat;
-	
-    @Column(name="lng", precision = 10, scale = 8)
-    private BigDecimal lng;
 	
 	@Column(name="description")
 	private String description;
