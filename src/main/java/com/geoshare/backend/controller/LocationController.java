@@ -3,7 +3,9 @@ package com.geoshare.backend.controller;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import com.geoshare.backend.service.LocationService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -111,6 +114,26 @@ public class LocationController {
 		
 		locationService.updateLocation(locationDTO, auth);
 		return new ResponseEntity<>("Update request ran with no errors.", HttpStatus.OK);
+	}
+	
+	@GetMapping("/preview")
+	public Mono<ResponseEntity<byte[]>> fetchPreview(
+			@RequestParam(value = "id", required = true) Long locationID,
+			Authentication auth) {
+		
+		Mono<byte[]> mapsApiResponse = locationService.fetchPreview(locationID, auth);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.IMAGE_JPEG);
+		
+		
+		//Man this looks really funky but I got it working
+		return mapsApiResponse.map(bytes ->
+			 new ResponseEntity<>(bytes, headers, HttpStatus.OK))
+				.onErrorResume(e -> {
+				 return Mono.just(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+			 }
+		);			
 	}
 	
 }

@@ -90,7 +90,7 @@ public class SecurityConfig {
     	
     	corsConfig.setAllowCredentials(true);
     	corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
-    	corsConfig.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+    	corsConfig.setAllowedHeaders(Arrays.asList("authorization", "content-type", "responseType"));
     	corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
     	
         urlCorsConfig.registerCorsConfiguration("/**", corsConfig);
