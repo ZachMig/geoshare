@@ -43,15 +43,15 @@ public class UrlParserService {
 	public ParsedUrlData parseData(String url) {
 		
         Pattern coordsPattern = Pattern.compile("@([-\\d.]+),([-\\d.]+)", Pattern.CASE_INSENSITIVE);
-        Pattern yawPattern = Pattern.compile("(\\d+(?:\\.\\d+)?)h", Pattern.CASE_INSENSITIVE);
         Pattern pitchPattern = Pattern.compile("pitch%3D([-\\d.]+)", Pattern.CASE_INSENSITIVE);
+        Pattern yawPattern = Pattern.compile("(\\d+(?:\\.\\d+)?)h", Pattern.CASE_INSENSITIVE);
 
 		BigDecimal lat, lng;
 		Integer pitch, yaw;
 		
 		Matcher coordsMatcher = coordsPattern.matcher(url);
-		Matcher pitchMatcher = yawPattern.matcher(url);
-	    Matcher yawMatcher = pitchPattern.matcher(url);
+		Matcher pitchMatcher = pitchPattern.matcher(url);
+	    Matcher yawMatcher = yawPattern.matcher(url);
 	    
 	    if (coordsMatcher.find()) {
 	    	lat = BigDecimal.valueOf(Double.parseDouble(coordsMatcher.group(1)));

@@ -1,11 +1,13 @@
 package com.geoshare.backend.service;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.entity.Country;
@@ -19,6 +21,7 @@ import com.geoshare.backend.repository.LocationRepository;
 import com.geoshare.backend.service.UrlParserService.ParsedUrlData;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -30,6 +33,7 @@ public class LocationService {
 	private GeoshareUserRepository userRepository;
 	private LocationListRepository locationListRepository;
 	private UrlParserService urlParserService;
+	private UrlSigner urlSigner;
 
 	
 	public LocationService(
@@ -38,7 +42,8 @@ public class LocationService {
 			LocationRepository locationRepository, 
 			GeoshareUserRepository userRepository,
 			LocationListRepository locationListRepository,
-			UrlParserService urlParserService) {
+			UrlParserService urlParserService,
+			UrlSigner urlSigner) {
 		
 		this.countryService = countryService;
 		this.metaService = metaService;
@@ -46,6 +51,7 @@ public class LocationService {
 		this.userRepository = userRepository;
 		this.locationListRepository = locationListRepository;
 		this.urlParserService = urlParserService;
+		this.urlSigner = urlSigner;
 	}
 
 	public List<Location> findAllByUser(Long userID) {
@@ -123,11 +129,6 @@ public class LocationService {
 			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
 		}
 		
-//		//Make sure received URL is a valid Google Maps Pattern
-//		if (!mapsUrlPattern.matcher(locationDTO.url()).matches()) {
-//			throw new IllegalArgumentException("Invalid Google Maps URL given as part of Create Location request.");
-//		}
-		
 		ParsedUrlData urlData = urlParserService.parseData(locationDTO.url());
 		
 		Country newCountry = countryService.findCountry(locationDTO.countryName());
@@ -143,6 +144,72 @@ public class LocationService {
 		location.setYaw(urlData.getYaw());
 		
 		return DTOMapper.mapLocationDTO(locationRepository.save(location));
+	}
+	
+	
+	public Mono<byte[]> fetchPreview(Long locationID, Authentication auth) {
+
+		Location location = locationRepository.findByIDOrThrow(locationID);
+		
+		if (!HelperService.userOwns(auth, List.of(location))) {
+			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
+		}
+		
+		
+		
+		//Do this once somewhere else so it doesn't run every time
+//		try {
+//			key = URLEncoder.encode("", StandardCharsets.UTF_8.toString());
+//		} catch (UnsupportedEncodingException e) {
+//	        throw new RuntimeException("Encoding Error while making Maps API Call");
+//		}
+		
+		
+		
+		//Replace with environment variable on ec2
+		final String apiKey = "ITS A SECRET DUH";
+		
+		String latAndLng = String.format("%f,%f", location.getLat(), location.getLng());
+		
+		String urlToSign = "https://maps.googleapis.com/maps/api/streetview?size=640x640&location=%s&heading=%s&pitch=%s&key=%s"
+				.formatted(
+						latAndLng,
+						location.getYaw(),
+						location.getPitch(),
+						apiKey);
+		
+		System.out.println("URL To Sign: " + urlToSign);
+		
+		String signedURL = "";
+		try {
+			signedURL = urlSigner.signUrl(urlToSign);
+		} catch (Exception e) {
+			//Deal with this somehow later it's 4AM
+		}
+
+		System.out.println("Signed URL: " + signedURL);
+		
+		WebClient webClient = WebClient.create();
+		
+		Mono<byte[]> apiResponse = webClient
+		.get()
+		.uri(signedURL)
+		.retrieve()
+		.bodyToMono(byte[].class)
+		.doOnNext(bytes -> {
+		    if (bytes.length == 0) {
+		    	System.out.println("Empty response from Google API.");
+		    } else {
+		    	System.out.println("Received bytes from Google API: " + bytes.length);
+		    }
+		})
+		.onErrorResume(e -> {
+			e.printStackTrace();
+			return Mono.empty();
+		});
+		
+		
+		return apiResponse;
 		
 	}
 	
