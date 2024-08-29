@@ -21,7 +21,6 @@ public class DTOMapper {
 				location.getUser().getId(),
 				location.getLists().stream().map(list -> list.getId()).toList()
 		);
-		
 	}
 	
 	public static LocationListDTO mapListDTO(LocationList locationList) {
