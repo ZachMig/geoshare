@@ -1,5 +1,6 @@
 package com.geoshare.backend.entity;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ import lombok.Setter;
 public class Location implements Ownable {
 	
 	public Location(String url, String description, Country country,
-			GeoshareUser user, Meta meta) {
+			GeoshareUser user, Meta meta, BigDecimal lat, BigDecimal lng, Integer pitch, Integer yaw) {
 		this.url = url;
 		this.description = description;
 		this.country = country;
@@ -35,6 +36,10 @@ public class Location implements Ownable {
 		this.lists = new HashSet<>();
 		this.listed = Long.valueOf(0);
 		this.meta = meta;
+		this.lat = lat;
+		this.lng = lng;
+		this.pitch = pitch;
+		this.yaw = yaw;
 	}
 
 	@Id
@@ -62,10 +67,21 @@ public class Location implements Ownable {
 	private Long listed;
 	
 	//TODO
-	//Add numberOfLists field so we can easily determine if a location needs to be marked unlisted
+	//Add numberOfLists field so we can easily determine if a location needs to be marked unlisted ?
 	
 	@ManyToOne
 	@JoinColumn(name="meta_id")
 	private Meta meta;
 	
+	@Column(name="lat")
+	private BigDecimal lat;
+	
+	@Column(name="lng")
+	private BigDecimal lng;
+	
+	@Column(name="pitch")
+	private Integer pitch;
+	
+	@Column(name="yaw")
+	private Integer yaw;
 }

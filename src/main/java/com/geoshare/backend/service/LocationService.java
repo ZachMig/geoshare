@@ -2,7 +2,6 @@ package com.geoshare.backend.service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import com.geoshare.backend.entity.Meta;
 import com.geoshare.backend.repository.GeoshareUserRepository;
 import com.geoshare.backend.repository.LocationListRepository;
 import com.geoshare.backend.repository.LocationRepository;
+import com.geoshare.backend.service.UrlParserService.ParsedUrlData;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +29,7 @@ public class LocationService {
 	private LocationRepository locationRepository;
 	private GeoshareUserRepository userRepository;
 	private LocationListRepository locationListRepository;
-	private Pattern mapsUrlPattern;
+	private UrlParserService urlParserService;
 
 	
 	public LocationService(
@@ -38,14 +38,14 @@ public class LocationService {
 			LocationRepository locationRepository, 
 			GeoshareUserRepository userRepository,
 			LocationListRepository locationListRepository,
-			Pattern mapsUrlPattern) {
+			UrlParserService urlParserService) {
 		
 		this.countryService = countryService;
 		this.metaService = metaService;
 		this.locationRepository = locationRepository;
 		this.userRepository = userRepository;
 		this.locationListRepository = locationListRepository;
-		this.mapsUrlPattern = mapsUrlPattern;
+		this.urlParserService = urlParserService;
 	}
 
 	public List<Location> findAllByUser(Long userID) {
@@ -70,11 +70,8 @@ public class LocationService {
 	
 	public Location createLocation(LocationDTO locationDTO) {
 		
-		//Make sure received URL is a valid Google Maps Pattern
-		if (!mapsUrlPattern.matcher(locationDTO.url()).matches()) {
-			throw new IllegalArgumentException("Invalid Google Maps URL given as part of Create Location request.");
-		}
-		
+		ParsedUrlData urlData = urlParserService.parseData(locationDTO.url());
+	    
 		Long userID = locationDTO.userID();
 		
 		Country country = countryService.findCountry(locationDTO.countryName()); //Cached
@@ -86,7 +83,11 @@ public class LocationService {
 				locationDTO.description(),
 				country,
 				geoshareUser,
-				meta);
+				meta,
+				urlData.getLat(),
+				urlData.getLng(),
+				urlData.getPitch(),
+				urlData.getYaw());
 		
 
 		return locationRepository.save(location);
@@ -122,10 +123,12 @@ public class LocationService {
 			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
 		}
 		
-		//Make sure received URL is a valid Google Maps Pattern
-		if (!mapsUrlPattern.matcher(locationDTO.url()).matches()) {
-			throw new IllegalArgumentException("Invalid Google Maps URL given as part of Create Location request.");
-		}
+//		//Make sure received URL is a valid Google Maps Pattern
+//		if (!mapsUrlPattern.matcher(locationDTO.url()).matches()) {
+//			throw new IllegalArgumentException("Invalid Google Maps URL given as part of Create Location request.");
+//		}
+		
+		ParsedUrlData urlData = urlParserService.parseData(locationDTO.url());
 		
 		Country newCountry = countryService.findCountry(locationDTO.countryName());
 		Meta newMeta = metaService.findMeta(locationDTO.meta());
@@ -134,9 +137,14 @@ public class LocationService {
 		location.setCountry(newCountry);
 		location.setMeta(newMeta);
 		location.setDescription(locationDTO.description());
+		location.setLat(urlData.getLat());
+		location.setLng(urlData.getLng());
+		location.setPitch(urlData.getPitch());
+		location.setYaw(urlData.getYaw());
 		
 		return DTOMapper.mapLocationDTO(locationRepository.save(location));
 		
 	}
+	
 	
 }
