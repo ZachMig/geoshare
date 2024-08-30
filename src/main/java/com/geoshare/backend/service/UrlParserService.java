@@ -13,66 +13,105 @@ public class UrlParserService {
 
 	//Container Class
 	@Getter
-	public class ParsePatterns {
-		public ParsePatterns(Pattern coordsPattern, Pattern pitchPattern, Pattern yawPattern) {
-			this.coordsPattern = coordsPattern;
-			this.pitchPattern = pitchPattern;
-			this.yawPattern = yawPattern;
-		}
-		private Pattern coordsPattern;
-		private Pattern pitchPattern;
-		private Pattern yawPattern;
-	}
-	
-	//Container Class
-	@Getter
 	public class ParsedUrlData {
-	    public ParsedUrlData(BigDecimal lat, BigDecimal lng, Integer pitch, Integer yaw) {
+	    public ParsedUrlData(BigDecimal lat, BigDecimal lng, Integer fov, BigDecimal heading, BigDecimal pitch) {
 	        this.lat = lat;
 	        this.lng = lng;
+	        this.fov = fov;
+	        this.heading = heading;
 	        this.pitch = pitch;
-	        this.yaw = yaw;
 	    }
 	    
 	    private BigDecimal lat;
 	    private BigDecimal lng;
-	    private Integer pitch;
-	    private Integer yaw;
+	    private Integer fov;
+	    private BigDecimal heading;
+	    private BigDecimal pitch;
 	}
 	
 	public ParsedUrlData parseData(String url) {
+		char[] urlChars = url.toCharArray();
+		int pointer = 0;
+		StringBuilder buffer = new StringBuilder();
+		int len = url.length();
 		
-        Pattern coordsPattern = Pattern.compile("@([-\\d.]+),([-\\d.]+)", Pattern.CASE_INSENSITIVE);
-        Pattern pitchPattern = Pattern.compile("pitch%3D([-\\d.]+)", Pattern.CASE_INSENSITIVE);
-        Pattern yawPattern = Pattern.compile("(\\d+(?:\\.\\d+)?)h", Pattern.CASE_INSENSITIVE);
-
-		BigDecimal lat, lng;
-		Integer pitch, yaw;
+		BigDecimal lat = null, lng = null;
+		Integer fov = null;
+		BigDecimal heading = null, pitch = null;
 		
-		Matcher coordsMatcher = coordsPattern.matcher(url);
-		Matcher pitchMatcher = pitchPattern.matcher(url);
-	    Matcher yawMatcher = yawPattern.matcher(url);
-	    
-	    if (coordsMatcher.find()) {
-	    	lat = BigDecimal.valueOf(Double.parseDouble(coordsMatcher.group(1)));
-	    	lng = BigDecimal.valueOf(Double.parseDouble(coordsMatcher.group(2)));
-	    } else {
-	    	throw new IllegalArgumentException("Unable to parse coordinates from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
-	    }
-	    
-	    if (pitchMatcher.find()) {
-	    	pitch = (int) Double.parseDouble(pitchMatcher.group(1));
-	    } else {
-	    	throw new IllegalArgumentException("Unable to parse pitch from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
-	    }
-	    
-	    if (yawMatcher.find()) {
-	    	yaw = (int) Double.parseDouble(yawMatcher.group(1));
-	    } else {
-	    	throw new IllegalArgumentException("Unable to parse yaw from provide Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
-	    }
+		//Parse Coordinates
+		pointer = url.indexOf("@") + 1;
+		while (pointer < len && lat == null && lng == null) {
+			//Parse Latitude
+			while (urlChars[pointer] != ',') {
+				buffer.append(urlChars[pointer]);
+				pointer++;
+			}
+			lat = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
+			buffer = new StringBuilder();
+			pointer++;
+			
+			//Parse Longitude
+			while (urlChars[pointer] != ',') {
+				buffer.append(urlChars[pointer]);
+				pointer++;
+			}
+			lng = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
+			buffer = new StringBuilder();
+		}
 		
-		return new ParsedUrlData(lat, lng, pitch, yaw);
+		//Parse Directional Values
+		pointer = url.indexOf("3a,") + 3;
+		while (pointer < len && fov == null && heading == null && pitch == null) {
+			
+			//Parse FoV
+			while (urlChars[pointer] != 'y') {
+				buffer.append(urlChars[pointer]);
+				pointer++;
+			}
+			fov = Integer.parseInt(buffer.toString());
+			buffer = new StringBuilder();
+			pointer+=2; //Move past the 'y' and also the ','
+			
+			//Parse Heading
+			while (urlChars[pointer] != 'h') {
+				buffer.append(urlChars[pointer]);
+				pointer++;
+			}
+			heading = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
+			buffer = new StringBuilder();
+			pointer+=2; //Move past the 'h' and also the ','
+			
+			//Parse Pitch
+			while (urlChars[pointer] != 't') {
+				buffer.append(urlChars[pointer]);
+				pointer++;
+			}
+			Double pitchD = Double.parseDouble(buffer.toString());
+			pitchD -= 90.0; // Google Maps API requests and Street View URLs handle pitch differently 90->90 vs 0->180
+			pitch = BigDecimal.valueOf(pitchD);
+		}
+		
+		
+		//TODO
+		// Maybe change this to allow creating locations with URLs that don't pass? Just won't have a Preview available.
+		if (lat == null || lng == null) {
+			throw new IllegalArgumentException("Unable to parse coordinates from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
+		}
+		
+		if (fov == null) {
+			throw new IllegalArgumentException("Unable to parse FoV from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
+		}
+		
+		if (heading == null) {
+			throw new IllegalArgumentException("Unable to parse heading from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
+		}
+		
+		if (pitch == null) {
+			throw new IllegalArgumentException("Unable to parse pitch from provided Google Maps URL. Please ensure you are following the format described in the User Guide, and contact the site owner if you suspect an error.");
+		}
+		
+		return new ParsedUrlData(lat, lng, fov, heading, pitch);
 	}
 
 	

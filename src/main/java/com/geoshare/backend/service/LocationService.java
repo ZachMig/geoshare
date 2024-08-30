@@ -1,14 +1,15 @@
 package com.geoshare.backend.service;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.geoshare.backend.config.ApiProps;
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.entity.Country;
 import com.geoshare.backend.entity.GeoshareUser;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@PropertySource("classpath:application.properties")
 public class LocationService {
 	
 	private CountryService countryService;
@@ -34,6 +36,7 @@ public class LocationService {
 	private LocationListRepository locationListRepository;
 	private UrlParserService urlParserService;
 	private UrlSigner urlSigner;
+	private String apiKey;
 
 	
 	public LocationService(
@@ -43,7 +46,8 @@ public class LocationService {
 			GeoshareUserRepository userRepository,
 			LocationListRepository locationListRepository,
 			UrlParserService urlParserService,
-			UrlSigner urlSigner) {
+			UrlSigner urlSigner,
+			ApiProps apiProps) {
 		
 		this.countryService = countryService;
 		this.metaService = metaService;
@@ -52,8 +56,12 @@ public class LocationService {
 		this.locationListRepository = locationListRepository;
 		this.urlParserService = urlParserService;
 		this.urlSigner = urlSigner;
+		this.apiKey = apiProps.getKey();
 	}
-
+	
+//	@Value("${maps.api.key}")
+//	private String apiKey;
+	
 	public List<Location> findAllByUser(Long userID) {
 		return locationRepository.findAllByUser(userID);
 	}
@@ -84,6 +92,13 @@ public class LocationService {
 		Meta meta = metaService.findMeta(locationDTO.meta()); //Cached
 		GeoshareUser geoshareUser = userRepository.findByIDOrThrow(userID);
 		
+		String previewUrlNoKey = "https://maps.googleapis.com/maps/api/streetview?size=640x640&location=%s&fov=%s&heading=%s&pitch=%s&key="
+				.formatted(
+						urlData.getLat()+","+urlData.getLng(),
+						urlData.getFov(),
+						urlData.getHeading(),
+						urlData.getPitch());
+		
 		Location location = new Location(
 				locationDTO.url(),
 				locationDTO.description(),
@@ -92,8 +107,10 @@ public class LocationService {
 				meta,
 				urlData.getLat(),
 				urlData.getLng(),
+				urlData.getFov(),
+				urlData.getHeading(),
 				urlData.getPitch(),
-				urlData.getYaw());
+				previewUrlNoKey);
 		
 
 		return locationRepository.save(location);
@@ -130,6 +147,13 @@ public class LocationService {
 		}
 		
 		ParsedUrlData urlData = urlParserService.parseData(locationDTO.url());
+		String previewUrlNoKey = "https://maps.googleapis.com/maps/api/streetview?size=640x640&location=%s&fov=%s&heading=%s&pitch=%s&key="
+				.formatted(
+						urlData.getLat()+","+urlData.getLng(),
+						urlData.getFov(),
+						urlData.getHeading(),
+						urlData.getPitch());
+		
 		
 		Country newCountry = countryService.findCountry(locationDTO.countryName());
 		Meta newMeta = metaService.findMeta(locationDTO.meta());
@@ -140,8 +164,10 @@ public class LocationService {
 		location.setDescription(locationDTO.description());
 		location.setLat(urlData.getLat());
 		location.setLng(urlData.getLng());
+		location.setFov(urlData.getFov());
+		location.setHeading(urlData.getHeading());
 		location.setPitch(urlData.getPitch());
-		location.setYaw(urlData.getYaw());
+		location.setPreviewUrl(previewUrlNoKey);
 		
 		return DTOMapper.mapLocationDTO(locationRepository.save(location));
 	}
@@ -155,28 +181,7 @@ public class LocationService {
 			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
 		}
 		
-		
-		
-		//Do this once somewhere else so it doesn't run every time
-//		try {
-//			key = URLEncoder.encode("", StandardCharsets.UTF_8.toString());
-//		} catch (UnsupportedEncodingException e) {
-//	        throw new RuntimeException("Encoding Error while making Maps API Call");
-//		}
-		
-		
-		
-		//Replace with environment variable on ec2
-		final String apiKey = "ITS A SECRET DUH";
-		
-		String latAndLng = String.format("%f,%f", location.getLat(), location.getLng());
-		
-		String urlToSign = "https://maps.googleapis.com/maps/api/streetview?size=640x640&location=%s&heading=%s&pitch=%s&key=%s"
-				.formatted(
-						latAndLng,
-						location.getYaw(),
-						location.getPitch(),
-						apiKey);
+		String urlToSign = location.getPreviewUrl().concat(apiKey);
 		
 		System.out.println("URL To Sign: " + urlToSign);
 		
@@ -184,7 +189,8 @@ public class LocationService {
 		try {
 			signedURL = urlSigner.signUrl(urlToSign);
 		} catch (Exception e) {
-			//Deal with this somehow later it's 4AM
+			//IDk man throw this up? its 4am
+			e.printStackTrace();
 		}
 
 		System.out.println("Signed URL: " + signedURL);
