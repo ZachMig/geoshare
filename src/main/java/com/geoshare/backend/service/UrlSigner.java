@@ -9,7 +9,11 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.geoshare.backend.config.ApiProps;
 
 
 /**
@@ -19,8 +23,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class UrlSigner {
 	
+	public UrlSigner(ApiProps apiProps) {
+		this.apiSecret=apiProps.getSecret();
+		this.key = Base64.getDecoder().decode(apiSecret.replace('-', '+').replace('_', '/'));
+	}
+	
+	private String apiSecret;
+	
 	//Replace signature with value from environment variable on ec2
-	private byte[] key = Base64.getDecoder().decode("SECRET NO LOOKIE".replace('-', '+').replace('_', '/'));
+	private byte[] key;// = Base64.getDecoder().decode(apiSecret.replace('-', '+').replace('_', '/'));
 	
 	
 	//Helper

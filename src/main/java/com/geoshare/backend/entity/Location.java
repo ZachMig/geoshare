@@ -28,7 +28,8 @@ import lombok.Setter;
 public class Location implements Ownable {
 	
 	public Location(String url, String description, Country country,
-			GeoshareUser user, Meta meta, BigDecimal lat, BigDecimal lng, Integer pitch, Integer yaw) {
+			GeoshareUser user, Meta meta, BigDecimal lat, BigDecimal lng,
+			Integer fov, BigDecimal pitch, BigDecimal heading, String previewUrl) {
 		this.url = url;
 		this.description = description;
 		this.country = country;
@@ -38,8 +39,10 @@ public class Location implements Ownable {
 		this.meta = meta;
 		this.lat = lat;
 		this.lng = lng;
+		this.fov = fov;
+		this.heading = heading;
 		this.pitch = pitch;
-		this.yaw = yaw;
+		this.previewUrl = previewUrl;
 	}
 
 	@Id
@@ -78,10 +81,16 @@ public class Location implements Ownable {
 	
 	@Column(name="lng")
 	private BigDecimal lng;
+
+	@Column(name="fov")
+	private Integer fov;
+	
+	@Column(name="heading")
+	private BigDecimal heading;
 	
 	@Column(name="pitch")
-	private Integer pitch;
+	private BigDecimal pitch;
 	
-	@Column(name="yaw")
-	private Integer yaw;
+	@Column(name="preview_url")
+	private String previewUrl;
 }
