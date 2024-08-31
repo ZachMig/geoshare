@@ -29,7 +29,7 @@ public class Location implements Ownable {
 	
 	public Location(String url, String description, Country country,
 			GeoshareUser user, Meta meta, BigDecimal lat, BigDecimal lng,
-			Integer fov, BigDecimal pitch, BigDecimal heading, String previewUrl) {
+			Integer fov, BigDecimal heading, BigDecimal pitch, String previewUrl) {
 		this.url = url;
 		this.description = description;
 		this.country = country;
