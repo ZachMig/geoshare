@@ -185,9 +185,9 @@ public class LocationService {
 		
 		Location location = locationRepository.findByIDOrThrow(locationID);
 		
-		if (!HelperService.userOwns(auth, List.of(location))) {
-			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
-		}
+//		if (!HelperService.userOwns(auth, List.of(location))) {
+//			throw new AccessDeniedException("User " + auth.getName() + " does not own this location.");
+//		}
 		
 		String urlToSign = location.getPreviewUrl().concat(apiKey);
 		
