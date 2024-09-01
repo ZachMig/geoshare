@@ -50,7 +50,7 @@ public class UrlParserService {
 			lat = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
 			buffer = new StringBuilder();
 			pointer++;
-			System.out.println("Parsed lat as: " + lat);
+			//System.out.println("Parsed lat as: " + lat);
 			
 			//Parse Longitude
 			while (urlChars[pointer] != ',') {
@@ -60,7 +60,7 @@ public class UrlParserService {
 			lng = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
 			buffer = new StringBuilder();
 			pointer++; // Move over the last , found so we properly find the next one
-			System.out.println("Parsed lng as: " + lng);
+			//System.out.println("Parsed lng as: " + lng);
 		}
 		
 		//Parse Directional Values
@@ -72,10 +72,10 @@ public class UrlParserService {
 				buffer.append(urlChars[pointer]);
 				pointer++;
 			}
-			fov = Integer.parseInt(buffer.toString());
+			fov = (int) Double.parseDouble(buffer.toString());
 			buffer = new StringBuilder();
 			pointer+=2; //Move past the 'y' and also the ','
-			System.out.println("Parsed fov as: " + fov);
+			//System.out.println("Parsed fov as: " + fov);
 			
 			//Parse Heading
 			while (urlChars[pointer] != 'h') {
@@ -85,7 +85,7 @@ public class UrlParserService {
 			heading = BigDecimal.valueOf(Double.parseDouble(buffer.toString()));
 			buffer = new StringBuilder();
 			pointer+=2; //Move past the 'h' and also the ','
-			System.out.println("Parsed heading as: " + heading);
+			//System.out.println("Parsed heading as: " + heading);
 			
 			//Parse Pitch
 			while (urlChars[pointer] != 't') {
@@ -95,7 +95,7 @@ public class UrlParserService {
 			Double pitchD = Double.parseDouble(buffer.toString());
 			pitchD -= 90.0; // Google Maps API requests and Street View URLs handle pitch differently 90->90 vs 0->180
 			pitch = BigDecimal.valueOf(pitchD);
-			System.out.println("Parsed pitch as: " + pitch);
+			//System.out.println("Parsed pitch as: " + pitch);
 		}
 		
 		
