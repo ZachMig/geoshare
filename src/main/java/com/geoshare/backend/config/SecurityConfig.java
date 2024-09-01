@@ -75,6 +75,7 @@ public class SecurityConfig {
                             		.requestMatchers("/api/users/findall").permitAll()
                             		.requestMatchers("api/lists/findformatted").permitAll()
                             		.requestMatchers("api/lists/searchlists").permitAll()
+                            		.requestMatchers("api/locations/apicount").permitAll()
                             		.anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -89,7 +90,7 @@ public class SecurityConfig {
     	UrlBasedCorsConfigurationSource urlCorsConfig = new UrlBasedCorsConfigurationSource();
     	
     	corsConfig.setAllowCredentials(true);
-    	corsConfig.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
+    	corsConfig.setAllowedOriginPatterns(Arrays.asList("https://geosave.org"));
     	corsConfig.setAllowedHeaders(Arrays.asList("authorization", "content-type", "responseType"));
     	corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
     	
