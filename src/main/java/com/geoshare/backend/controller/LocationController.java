@@ -136,4 +136,9 @@ public class LocationController {
 		);			
 	}
 	
+	@GetMapping("/apicount")
+	public ResponseEntity<Integer> checkApiCount() {
+		return new ResponseEntity<>(locationService.checkApiCount(), HttpStatus.OK);
+	}
+	
 }

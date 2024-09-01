@@ -2,14 +2,15 @@ package com.geoshare.backend.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.geoshare.backend.config.ApiProps;
 import com.geoshare.backend.dto.LocationDTO;
 import com.geoshare.backend.entity.Country;
 import com.geoshare.backend.entity.GeoshareUser;
@@ -37,6 +38,7 @@ public class LocationService {
 	private UrlParserService urlParserService;
 	private UrlSigner urlSigner;
 	private String apiKey;
+	private AtomicInteger apiCount;
 
 	
 	public LocationService(
@@ -47,7 +49,8 @@ public class LocationService {
 			LocationListRepository locationListRepository,
 			UrlParserService urlParserService,
 			UrlSigner urlSigner,
-			ApiProps apiProps) {
+			@Value("${MAPS_API_KEY}") String apiKey,
+			AtomicInteger apiCount) {
 		
 		this.countryService = countryService;
 		this.metaService = metaService;
@@ -56,7 +59,8 @@ public class LocationService {
 		this.locationListRepository = locationListRepository;
 		this.urlParserService = urlParserService;
 		this.urlSigner = urlSigner;
-		this.apiKey = apiProps.getKey();
+		this.apiKey = apiKey;
+		this.apiCount = apiCount;
 	}
 	
 //	@Value("${maps.api.key}")
@@ -174,7 +178,11 @@ public class LocationService {
 	
 	
 	public Mono<byte[]> fetchPreview(Long locationID, Authentication auth) {
-
+		
+		if (apiCount.getAndDecrement() < 1) {
+			return Mono.empty();
+		}
+		
 		Location location = locationRepository.findByIDOrThrow(locationID);
 		
 		if (!HelperService.userOwns(auth, List.of(location))) {
@@ -183,7 +191,7 @@ public class LocationService {
 		
 		String urlToSign = location.getPreviewUrl().concat(apiKey);
 		
-		System.out.println("URL To Sign: " + urlToSign);
+		//System.out.println("URL To Sign: " + urlToSign);
 		
 		String signedURL = "";
 		try {
@@ -193,7 +201,7 @@ public class LocationService {
 			e.printStackTrace();
 		}
 
-		System.out.println("Signed URL: " + signedURL);
+		//System.out.println("Signed URL: " + signedURL);
 		
 		WebClient webClient = WebClient.create();
 		
@@ -219,5 +227,9 @@ public class LocationService {
 		
 	}
 	
+	
+	public Integer checkApiCount() {
+		return apiCount.get();
+	}
 	
 }

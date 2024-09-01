@@ -9,11 +9,8 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.geoshare.backend.config.ApiProps;
 
 
 /**
@@ -23,16 +20,12 @@ import com.geoshare.backend.config.ApiProps;
 @Service
 public class UrlSigner {
 	
-	public UrlSigner(ApiProps apiProps) {
-		this.apiSecret=apiProps.getSecret();
-		this.key = Base64.getDecoder().decode(apiSecret.replace('-', '+').replace('_', '/'));
+
+	public UrlSigner(@Value("${MAPS_API_SIG}") String sig) {
+		this.key = Base64.getDecoder().decode(sig.replace('-', '+').replace('_', '/'));
 	}
 	
-	private String apiSecret;
-	
-	//Replace signature with value from environment variable on ec2
-	private byte[] key;// = Base64.getDecoder().decode(apiSecret.replace('-', '+').replace('_', '/'));
-	
+	private byte[] key;
 	
 	//Helper
 	public String signRequest(String path, String query) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -66,11 +59,5 @@ public class UrlSigner {
 		String request = signRequest(url.getPath(),url.getQuery());
 		return url.getProtocol() + "://" + url.getHost() + request;
 	}
-	
-	
-	
-	
-	
-	
 	
 }
